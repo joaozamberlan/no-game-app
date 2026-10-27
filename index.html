@@ -1,0 +1,2601 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>No Game | Ficha de treino online para personal trainers</title>
+  <meta name="description" content="Sua ficha sai do PDF e vira treino registrado, série por série. Você monta a periodização, manda um link e o aluno registra carga e repetições no celular. O aluno não paga nada ao No Game." />
+  <meta name="theme-color" content="#0f0f0f" />
+  <meta property="og:title" content="No Game | Ficha de treino online para personal trainers" />
+  <meta property="og:description" content="Você monta a periodização e manda um link. O aluno registra carga e repetições no celular, e você vê a evolução sem perguntar no WhatsApp." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preload" href="/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin />
+
+  <style>
+    /* ── Fontes ──────────────────────────────────────────────────────────
+       Mesmo arquivo variável do app (Archivo, eixos de peso e largura).
+       "Archivo Placar" prende a largura em 75% para números e rótulos,
+       como no index.css do app. */
+    @font-face {
+      font-family: 'Archivo';
+      font-style: normal;
+      font-display: swap;
+      font-weight: 100 900;
+      font-stretch: 62% 125%;
+      src: url('/fonts/archivo-latin-wdth-normal.woff2') format('woff2-variations');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    @font-face {
+      font-family: 'Archivo';
+      font-style: normal;
+      font-display: swap;
+      font-weight: 100 900;
+      font-stretch: 62% 125%;
+      src: url('/fonts/archivo-latin-ext-wdth-normal.woff2') format('woff2-variations');
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+    @font-face {
+      font-family: 'Archivo Placar';
+      font-style: normal;
+      font-display: swap;
+      font-weight: 100 900;
+      font-stretch: 75%;
+      src: url('/fonts/archivo-latin-wdth-normal.woff2') format('woff2-variations');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    /* ── Tokens ──────────────────────────────────────────────────────────
+       Regra de papel: --brand só preenche; --brand-ink escreve texto
+       pequeno. Contrastes medidos anotados ao lado. */
+    :root {
+      --paper: #f4f3ef;              /* fundo da página (o creme do app) */
+      --white: #ffffff;
+      --mesa: #eae8e1;               /* um degrau abaixo do papel */
+      --mesa-2: #dedbd2;
+      --ink: #121316;                /* 17,9:1 sobre branco */
+      --muted: #565963;              /* 7,0:1 sobre branco, 6,3:1 sobre papel */
+      --line: rgba(20, 22, 26, 0.10);
+      --line-strong: rgba(20, 22, 26, 0.20);
+      --wash: #efebe6;               /* matiz do vermelho quase sem croma */
+      --wash-line: #e2dcd5;
+
+      --brand: #BA281A;              /* branco por cima: 6,2:1 */
+      --brand-hover: #D13322;        /* branco por cima: 5,0:1 */
+      --brand-ink: #A6251A;          /* 7,2:1 sobre branco */
+      --brand-soft: rgba(186, 40, 26, 0.10);
+
+      --success: #2da868;
+      --success-ink: #156642;        /* 6,9:1 sobre branco */
+      --warning: #dc6803;
+      --warning-ink: #a34207;        /* 6,0:1 sobre branco */
+
+      /* Superfícies escuras (tema escuro do app) */
+      --d-0: #0f0f0f;
+      --d-1: #181818;
+      --d-2: #272727;
+      --d-line: rgba(255, 255, 255, 0.10);
+      --d-line-strong: rgba(255, 255, 255, 0.22);
+      --d-text: #f1f1f1;
+      --d-muted: #aaaaaa;            /* 8,1:1 sobre #0f0f0f */
+      --d-brand: #CF3427;            /* branco por cima: 4,9:1 */
+      --d-brand-text: #E7675B;       /* 6,0:1 sobre #0f0f0f */
+
+      --font: 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Archivo Placar', 'Archivo', 'Arial Narrow', sans-serif;
+
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+      --header-h: 60px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--header-h) + 16px);
+      -webkit-font-smoothing: antialiased;
+      color-scheme: light;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+    h1, h2, h3 { text-wrap: balance; }
+    p, li { text-wrap: pretty; }
+    a { color: inherit; }
+    img, svg { display: block; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+    :focus-visible { outline: 2px solid var(--brand-ink); outline-offset: 3px; border-radius: 4px; }
+    .escuro :focus-visible { outline-color: var(--d-brand-text); }
+    ::selection { background: var(--brand); color: #fff; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+
+    .container { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 16px; }
+    @media (min-width: 640px) { .container { padding-inline: 24px; } }
+    @media (min-width: 1280px) { .container { padding-inline: 32px; } }
+
+    .num { font-variant-numeric: tabular-nums; }
+
+    /* ── Assinatura: o bloco com corte inclinado da logo ────────────────
+       O terceiro bloco do logotipo, em miniatura, antes de cada rótulo. */
+    .marca {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: var(--brand);
+      clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 100%);
+      flex: none;
+    }
+    .escuro .marca { background: var(--d-brand); }
+
+    .rotulo {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--brand-ink);
+      line-height: 1.3;
+    }
+    .escuro .rotulo { color: var(--d-brand-text); }
+
+    /* ── Tipografia ──────────────────────────────────────────────────── */
+    .titulo-hero {
+      font-size: clamp(2.5rem, 1.4rem + 3.6vw, 4.4rem);
+      font-weight: 800;
+      font-stretch: 94%;
+      letter-spacing: -0.035em;
+      word-spacing: 0.06em;
+      line-height: 1.03;
+      max-width: 16ch;
+    }
+    .titulo-secao {
+      font-size: clamp(1.9rem, 1.25rem + 2.2vw, 3rem);
+      font-weight: 800;
+      font-stretch: 94%;
+      letter-spacing: -0.03em;
+      word-spacing: 0.05em;
+      line-height: 1.08;
+      max-width: 22ch;
+    }
+    .lede {
+      font-size: 1.0625rem;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 58ch;
+    }
+    .escuro .lede { color: var(--d-muted); }
+
+    /* ── Botões ──────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 48px;
+      padding: 0.8rem 1.3rem;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      font-size: 15px;
+      font-weight: 650;
+      line-height: 1.2;
+      text-decoration: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      transition: background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.14s var(--ease-out-expo);
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn .seta { transition: transform 0.2s var(--ease-out-expo); }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .escuro .btn-primary { background: var(--d-brand); }
+    .btn-on-dark { color: var(--d-text); border-color: rgba(255, 255, 255, 0.35); }
+    .btn-ghost { background: var(--white); color: var(--ink); border-color: var(--line-strong); }
+    .btn-sm { min-height: 38px; padding: 0.5rem 0.95rem; font-size: 14px; border-radius: 8px; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .btn-primary:hover { background: var(--brand-hover); }
+      .escuro .btn-primary:hover { background: #E44436; }
+      .btn-on-dark:hover { border-color: #fff; }
+      .btn-ghost:hover { border-color: var(--ink); }
+      .btn:hover .seta { transform: translateX(4px); }
+    }
+
+    /* ── Cabeçalho: sempre escuro, com o filete vermelho do app ──────── */
+    .topo {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(15, 15, 15, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: inset 0 2px 0 var(--d-brand);
+      border-bottom: 1px solid var(--d-line);
+      color: var(--d-text);
+    }
+    @media (prefers-reduced-transparency: reduce) {
+      .topo { background: var(--d-0); backdrop-filter: none; -webkit-backdrop-filter: none; }
+    }
+    .topo-linha {
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: -0.035em;
+      text-transform: uppercase;
+    }
+    .nav { display: none; gap: 28px; }
+    .nav a {
+      position: relative;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--d-muted);
+      text-decoration: none;
+      padding-block: 6px;
+      transition: color 0.16s;
+    }
+    .nav a::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 1.5px;
+      background: var(--d-brand);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s var(--ease-out-expo);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .nav a:hover { color: var(--d-text); }
+      .nav a:hover::after { transform: scaleX(1); }
+    }
+    .topo-acoes { display: flex; align-items: center; gap: 8px; }
+    .link-entrar {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--d-muted);
+      text-decoration: none;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+    @media (hover: hover) and (pointer: fine) { .link-entrar:hover { color: var(--d-text); } }
+    @media (min-width: 920px) { .nav { display: flex; } }
+    @media (max-width: 419px) { .link-entrar { display: none; } }
+
+    /* ── Hero ────────────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      background: var(--d-0);
+      color: var(--d-text);
+      overflow: hidden;
+      border-bottom: 1px solid var(--d-line);
+    }
+    /* Única camada decorativa: malha de pontos a 5% */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 22px 22px;
+      mask-image: linear-gradient(to bottom, #000 40%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent);
+      pointer-events: none;
+    }
+    .hero-grade {
+      position: relative;
+      display: grid;
+      gap: 56px;
+      padding-block: 56px 72px;
+    }
+    @media (min-width: 920px) {
+      .hero-grade {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 64px;
+        padding-block: 88px 104px;
+      }
+    }
+    .hero-texto { display: grid; gap: 24px; justify-items: start; }
+    .hero-texto .lede { max-width: 50ch; }
+    .hero-botoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+    .destaques {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      list-style: none;
+      font-size: 14px;
+      color: var(--d-muted);
+    }
+    .destaques li { display: flex; gap: 10px; align-items: baseline; }
+    .destaques li::before {
+      content: '';
+      width: 6px; height: 10px;
+      background: var(--d-brand);
+      clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 100%);
+      flex: none;
+      transform: translateY(1px);
+    }
+
+    /* ── Celular desenhado em CSS ────────────────────────────────────── */
+    .hero-preco { font-size: 14px; color: var(--d-muted); margin-top: -8px; }
+    .hero-preco b { color: var(--d-text); font-weight: 700; }
+
+    .palco { display: flex; justify-content: center; }
+
+    /* iPhone: moldura de titânio natural, bezel fino, Dynamic Island e barra home */
+    .celular {
+      position: relative;
+      width: min(316px, 100%);
+      padding: 7px;
+      border-radius: 54px;
+      background: #050505;
+      box-shadow: 0 0 0 2px #8a8782, 0 0 0 3px rgba(255, 255, 255, 0.18), 0 30px 70px -20px rgba(0, 0, 0, 0.45);   /* a única sombra forte da página */
+    }
+    /* Botão de ação e volume (esquerda); liga/desliga e botão da câmera (direita) */
+    .celular::before, .celular::after { content: ''; position: absolute; width: 3px; }
+    .celular::before {
+      left: -5px; top: 88px; height: 174px; border-radius: 2px 0 0 2px;
+      background: linear-gradient(#7b7873 0 28px, transparent 28px 46px, #7b7873 46px 102px, transparent 102px 118px, #7b7873 118px 174px);
+    }
+    .celular::after {
+      right: -5px; top: 130px; height: 214px; border-radius: 0 2px 2px 0;
+      background: linear-gradient(#7b7873 0 80px, transparent 80px 170px, #7b7873 170px 212px);
+    }
+    .ilha {
+      position: absolute; top: 11px; left: 50%;
+      width: 96px; height: 28px; margin-left: -48px;
+      border-radius: 20px; background: #000;
+      z-index: 10;
+    }
+    .ilha::after {
+      content: '';
+      position: absolute; top: 9px; right: 11px;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: #12151b; box-shadow: inset 0 0 0 1.5px #232832;
+    }
+    .barra-home {
+      position: absolute; bottom: 7px; left: 50%;
+      width: 118px; height: 4px; margin-left: -59px;
+      border-radius: 3px; background: #121316; opacity: 0.9;
+      z-index: 10;
+    }
+    .celular-tela {
+      position: relative;
+      height: 640px;
+      border-radius: 47px;
+      overflow: hidden;
+      background: #f4f3ef;
+      color: #121316;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    /* Tela do aluno: paleta e raios do app no tema claro */
+    .app-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 30px 6px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .app-status-icones { display: flex; gap: 5px; align-items: center; }
+    .app-status-icones i { display: block; background: #121316; border-radius: 1px; }
+    .app-cab { padding: 10px 16px 12px; border-bottom: 1px solid rgba(20, 22, 26, 0.10); }
+    .app-trilha {
+      display: flex; gap: 6px; align-items: center;
+      font-family: var(--font-mono);
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #A6251A;
+    }
+    .app-trilha::before { content: ''; width: 6px; height: 6px; background: #BA281A; border-radius: 1px; }
+    .app-titulo { font-size: 19px; font-weight: 800; letter-spacing: -0.03em; margin-top: 4px; }
+    .app-meta { color: #565963; font-size: 11px; margin-top: 2px; }
+    .app-meta b { color: #121316; font-weight: 650; }
+    .selo-verde {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-family: var(--font-mono);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+      color: #156642;
+      background: rgba(45, 168, 104, 0.12);
+      border: 1px solid rgba(45, 168, 104, 0.28);
+    }
+    .app-abas {
+      display: flex;
+      gap: 2px;
+      margin: 12px 16px 10px;
+      padding: 3px;
+      background: #eae8e1;
+      border: 1px solid rgba(20, 22, 26, 0.10);
+      border-radius: 9px;
+    }
+    .app-abas span {
+      flex: 1;
+      text-align: center;
+      padding: 6px 0;
+      border-radius: 7px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 12px;
+      color: #565963;
+    }
+    .app-abas span.ativa { background: #fff; color: #A6251A; box-shadow: inset 0 -2px 0 #BA281A; }
+    /* Faixa de progresso do treino (treino-progresso do app) */
+    .app-progresso {
+      display: flex; align-items: center; gap: 9px;
+      margin: -2px 16px 10px; padding: 4px 0 8px;
+      border-bottom: 1px solid rgba(20, 22, 26, 0.10);
+    }
+    .app-progresso-barra { flex: 1; display: flex; gap: 3px; }
+    .app-progresso-barra > span { flex: 1; height: 5px; border-radius: 2px; background: #dedbd2; }
+    .app-progresso-texto { font-family: var(--font-mono); font-size: 11px; color: #565963; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .app-progresso-texto b { font-weight: 800; color: #121316; }
+    .app-card {
+      margin: 0 12px 10px;
+      padding: 12px;
+      background: #fff;
+      border: 1px solid rgba(20, 22, 26, 0.10);
+      border-radius: 12px;
+    }
+    .app-card-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .app-ex-num {
+      font-family: var(--font-mono);
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; color: #A6251A;
+    }
+    .app-ex-nome { font-size: 14.5px; font-weight: 750; letter-spacing: -0.02em; margin-top: 2px; }
+    .app-desc {
+      display: inline-flex; gap: 4px; align-items: center;
+      padding: 4px 7px;
+      border-radius: 7px;
+      border: 1px solid rgba(186, 40, 26, 0.35);
+      background: rgba(186, 40, 26, 0.06);
+      color: #A6251A;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11.5px;
+      white-space: nowrap;
+    }
+    .app-chips { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-top: 7px; }
+    .chip-cinza, .chip-tecnica {
+      padding: 2px 7px; border-radius: 5px; font-size: 10.5px; font-weight: 600;
+    }
+    .chip-cinza { background: #eae8e1; color: #565963; }
+    .chip-tecnica { background: rgba(186, 40, 26, 0.08); color: #A6251A; border: 1px solid rgba(186, 40, 26, 0.25); border-radius: 99px; }
+    .app-instrucao { font-style: italic; color: #565963; font-size: 11px; }
+    .app-alvo {
+      display: flex; justify-content: space-between; gap: 8px;
+      margin-top: 9px; padding: 6px 9px;
+      background: #eae8e1; border-radius: 7px;
+      font-size: 10.5px; color: #565963;
+      white-space: nowrap;
+    }
+    .app-alvo b { color: #121316; font-weight: 700; }
+    .contagem { position: relative; display: inline-grid; }
+    .contagem > span { grid-area: 1 / 1; }
+    .app-ultimo { display: flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 10.5px; color: #565963; }
+    .app-ultimo svg { color: #BA281A; flex: none; }
+    .app-ultimo b { color: #121316; }
+    .app-series-cab, .app-serie {
+      display: grid;
+      grid-template-columns: 26px 1fr 1fr 1fr 30px;
+      gap: 6px;
+      align-items: center;
+    }
+    .app-series-cab {
+      margin-top: 10px; padding: 0 6px;
+      font-family: var(--font-mono);
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; color: #62666f;
+      text-align: center;
+    }
+    .app-serie {
+      margin-top: 5px; padding: 5px 6px;
+      background: #eae8e1;
+      border: 1px solid rgba(20, 22, 26, 0.08);
+      border-radius: 9px;
+      font-family: var(--font-mono);
+      text-align: center;
+    }
+    .app-serie .n { background: #dedbd2; border-radius: 6px; padding: 5px 0; font-weight: 700; font-size: 12px; }
+    .app-serie .ant { background: #fff; border-radius: 6px; padding: 3px 0; font-size: 10.5px; font-weight: 700; }
+    .app-serie .campo {
+      background: #fff; border-radius: 6px; padding: 4px 0;
+      font-size: 14px; font-weight: 700;
+    }
+    .app-serie .campo small { font-size: 9px; color: #62666f; font-weight: 600; margin-left: 2px; }
+    .app-serie .campo.vazio { color: #a0a3ab; }
+    .check {
+      width: 30px; height: 30px;
+      display: grid; place-items: center;
+      background: #fff;
+      border: 1px solid rgba(20, 22, 26, 0.16);
+      border-radius: 7px;
+      position: relative;
+    }
+    .check svg { width: 16px; height: 16px; }
+
+    /* A série 1 é marcada como feita depois da entrada do hero */
+    .serie-feita { transition: background-color 0.2s; }
+    .check-marca { opacity: 1; }
+    .check-feito { background: #2da868; border-color: #2da868; }
+    .serie-feita { background: rgba(45, 168, 104, 0.12); border-color: rgba(45, 168, 104, 0.35); }
+    .cont-antes { visibility: hidden; }
+
+    .app-card.cortado { height: 142px; overflow: hidden; }
+
+    /* Igual à barra flutuante do app no tema claro */
+    .descanso {
+      position: absolute;
+      left: 10px; right: 10px; bottom: 22px;
+      height: 60px;
+      padding: 0 10px 0 12px;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      background: rgba(255, 255, 255, 0.96);
+      color: #121316;
+      border: 1px solid rgba(186, 40, 26, 0.28);
+      border-radius: 16px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    .descanso-lado { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .descanso-lado svg { width: 18px; height: 18px; color: #BA281A; flex: none; }
+    .descanso-rotulo { display: block; font-size: 12px; font-weight: 600; line-height: 1.2; }
+    .descanso-sub { font-size: 9.5px; color: #565963; }
+    .descanso-tempo {
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+      color: #A6251A;
+      font-variant-numeric: tabular-nums;
+    }
+    .descanso-pular {
+      font-size: 11.5px; font-weight: 600;
+      padding: 9px 8px;
+      border: 1px solid rgba(20, 22, 26, 0.16);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    /* ── Entrada do hero: o único momento orquestrado ────────────────── */
+    @media (prefers-reduced-motion: no-preference) {
+      .palavra {
+        display: inline-block;
+        animation: palavra-sobe 0.8s var(--ease-out-expo) both;
+        animation-delay: calc(var(--i) * 55ms + 80ms);
+      }
+      .entra {
+        animation: entra-sobe 0.9s var(--ease-out-expo) both;
+        animation-delay: calc(var(--i) * 90ms + 420ms);
+      }
+      .celular {
+        animation: celular-entra 1s var(--ease-out-expo) 0.35s both;
+      }
+      /* Ação curta da tela: a série 1 é marcada e o descanso começa */
+      .check-marca { animation: marca-entra 0.32s var(--ease-out-expo) 1.7s both; }
+      .check-feito { animation: check-pinta 0.2s ease-out 1.6s both; }
+      .serie-feita { animation: serie-pinta 0.25s ease-out 1.6s both; }
+      .cont-antes { animation: mostra-ate 1.7s linear both; }
+      .cont-depois { animation: aparece 0.2s ease-out 1.7s both; }
+      .descanso { animation: descanso-sobe 0.42s var(--ease-drawer) 1.95s both; }
+    }
+    @keyframes palavra-sobe { from { opacity: 0; transform: translateY(0.35em); filter: blur(8px); } }
+    @keyframes entra-sobe { from { opacity: 0; transform: translateY(12px); } }
+    @keyframes celular-entra { from { opacity: 0; transform: translateY(28px) scale(0.985); filter: blur(6px); } }
+    @keyframes marca-entra { from { opacity: 0; transform: scale(0.4); } }
+    @keyframes check-pinta { from { background: #fff; border-color: rgba(20, 22, 26, 0.16); } }
+    @keyframes serie-pinta { from { background: #eae8e1; border-color: rgba(20, 22, 26, 0.08); } }
+    /* Visível até o fim da animação; depois vale o estado final (escondido) */
+    @keyframes mostra-ate { 0%, 99.9% { visibility: visible; } }
+    @keyframes aparece { from { opacity: 0; } }
+    @keyframes descanso-sobe { from { transform: translateY(calc(100% + 16px)); } }
+
+    /* ── Seções ──────────────────────────────────────────────────────── */
+    .secao { padding-block: 80px; border-top: 1px solid var(--line); }
+    @media (min-width: 920px) { .secao { padding-block: 112px; } }
+    .secao.branca { background: var(--white); }
+    .secao.wash { background: var(--wash); border-top-color: var(--wash-line); }
+    .secao-cab { display: grid; gap: 16px; margin-bottom: 56px; }
+
+    /* Como funciona: passos em fileiras alternadas, cada um com a tela */
+    .passos { display: grid; gap: 80px; }
+    .passo {
+      display: grid;
+      gap: 32px;
+      align-items: center;
+    }
+    @media (min-width: 920px) {
+      .passo { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; }
+      .passo:nth-child(even) .passo-texto { order: 2; }
+    }
+    .passo-texto { display: grid; gap: 14px; align-content: start; }
+    .passo-num {
+      font-family: var(--font);
+      font-stretch: 62%;
+      font-weight: 800;
+      font-size: 56px;
+      line-height: 0.9;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .passo h3 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); font-weight: 800; letter-spacing: -0.025em; word-spacing: 0.04em; line-height: 1.15; font-stretch: 96%; }
+    .passo p { color: var(--muted); max-width: 52ch; }
+    .passo-notas { list-style: none; display: grid; gap: 8px; margin-top: 4px; font-size: 15px; }
+    .passo-notas li { display: flex; gap: 10px; align-items: baseline; }
+    .passo-notas li::before {
+      content: ''; width: 6px; height: 10px; background: var(--brand); flex: none;
+      clip-path: polygon(0 0, 100% 40%, 100% 100%, 0 100%);
+      transform: translateY(1px);
+    }
+
+    /* Janela do produto (treinador, desktop) */
+    .janela {
+      background: #fff;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(18, 19, 22, 0.05), 0 12px 32px -8px rgba(18, 19, 22, 0.14);
+      font-size: 13px;
+    }
+    .janela-topo {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 46px; padding: 0 14px;
+      background: #0f0f0f; color: #f1f1f1;
+      box-shadow: inset 0 2px 0 #CF3427;
+    }
+    .janela-topo .logo { font-size: 13px; gap: 8px; }
+    .avatar {
+      width: 26px; height: 26px; border-radius: 99px;
+      display: grid; place-items: center;
+      background: #272727; color: #f1f1f1;
+      font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    }
+    .janela-corpo { padding: 16px 16px 18px; background: #f4f3ef; }
+    .migalha {
+      font-family: var(--font-mono);
+      font-size: 11.5px; letter-spacing: 0.02em;
+      color: #62666f;
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .migalha b { color: #121316; font-weight: 700; }
+    .ficha-abas {
+      display: flex; gap: 18px;
+      margin-top: 12px;
+      border-bottom: 1px solid rgba(20, 22, 26, 0.10);
+      font-weight: 600; font-size: 13px; color: #565963;
+      overflow: hidden;
+    }
+    .ficha-abas span { padding: 8px 0; white-space: nowrap; }
+    .ficha-abas span.ativa { color: #121316; box-shadow: inset 0 -2px 0 #BA281A; }
+    .ficha-abas span.nova { color: #A6251A; }
+    .ficha-abas span.ordem { margin-left: auto; color: #A6251A; }
+    .mini-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px; border-radius: 7px;
+      font-size: 12px; font-weight: 650;
+      border: 1px solid rgba(20, 22, 26, 0.16); background: #fff;
+    }
+    .mini-btn.primario { background: #BA281A; border-color: #BA281A; color: #fff; }
+
+    /* Primeiro acesso do aluno: painel de marca escuro + formulário claro */
+    .entrada {
+      display: grid;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(18, 19, 22, 0.05), 0 12px 32px -8px rgba(18, 19, 22, 0.14);
+    }
+    @media (min-width: 640px) { .entrada { grid-template-columns: 5fr 7fr; } }
+    .entrada-marca {
+      background: #0f0f0f; color: #f1f1f1;
+      padding: 20px;
+      box-shadow: inset 0 2px 0 #CF3427;
+      display: grid; align-content: space-between; gap: 28px;
+    }
+    .entrada-marca .logo { font-size: 13px; gap: 8px; }
+    .entrada-marca h4 { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+    .entrada-marca p { font-size: 12.5px; color: #aaaaaa; margin-top: 6px; }
+    .entrada-form { padding: 22px 20px; display: grid; gap: 14px; background: #f4f3ef; }
+    .campo-rotulo { font-size: 12px; font-weight: 500; color: #565963; margin-bottom: 5px; }
+    .campo-dica { font-size: 11px; color: #62666f; margin-top: 5px; }
+    .acesso-cab { display: grid; gap: 4px; }
+    .acesso-treinador { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+    .acesso-inicial {
+      width: 32px; height: 32px; border-radius: 9px;
+      display: grid; place-items: center;
+      background: #0f0f0f; color: #f1f1f1; font-weight: 800; font-size: 14px;
+    }
+    .acesso-treinador small { display: block; font-size: 10.5px; color: #62666f; }
+    .acesso-treinador b { display: block; font-size: 13px; font-weight: 700; }
+    .acesso-titulo { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+    .acesso-sub { font-size: 12.5px; color: #565963; line-height: 1.45; }
+    .campo-falso {
+      padding: 10px 12px; border-radius: 8px;
+      background: #fff; border: 1px solid rgba(20, 22, 26, 0.16);
+      font-size: 15px; font-variant-numeric: tabular-nums;
+    }
+    .pin { display: grid; grid-template-columns: repeat(4, 48px); gap: 8px; }
+    .pin span {
+      height: 54px; display: grid; place-items: center;
+      background: #fff; border: 1px solid rgba(20, 22, 26, 0.16); border-radius: 9px;
+      font-size: 22px; font-weight: 800;
+    }
+    .pin span.foco { border-color: #BA281A; box-shadow: 0 0 0 2px rgba(186, 40, 26, 0.18); }
+    .pin span.foco::after { content: ''; width: 1.5px; height: 22px; background: #121316; }
+    .entrada-form .mini-btn.primario { justify-content: center; padding: 11px; font-size: 14px; border-radius: 9px; }
+
+    /* Placar de progresso (prog-card do app) */
+    .prog {
+      background: #fff;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      box-shadow: inset 0 3px 0 #121316, 0 1px 2px rgba(18, 19, 22, 0.05), 0 12px 32px -8px rgba(18, 19, 22, 0.14);
+      padding: 20px 18px 18px;
+      display: grid; gap: 14px;
+      max-width: 560px;
+    }
+    .prog-topo { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .prog-nome { font-weight: 750; font-size: 15px; letter-spacing: -0.01em; }
+    .prog-faixa { font-family: var(--font-mono); font-size: 12px; color: #62666f; margin-left: auto; }
+    .prog-valor { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+    .prog-kg {
+      font-family: var(--font); font-stretch: 62%; font-weight: 800;
+      font-size: 64px; line-height: 0.85; letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .prog-kg small { font-size: 22px; margin-left: 4px; }
+    .prog-meta { display: grid; gap: 6px; padding-bottom: 4px; }
+    .prog-meta span { font-family: var(--font-mono); font-size: 12.5px; color: #565963; }
+    .selo {
+      display: inline-flex; align-items: center; gap: 4px;
+      width: max-content;
+      padding: 2px 8px; border-radius: 99px;
+      font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; letter-spacing: 0.02em;
+    }
+    .selo.acima { color: var(--success-ink); background: rgba(45, 168, 104, 0.12); border: 1px solid rgba(45, 168, 104, 0.28); }
+    .selo.abaixo { color: var(--warning-ink); background: rgba(220, 104, 3, 0.10); border: 1px solid rgba(220, 104, 3, 0.28); }
+    .placar { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 2px; list-style: none; }
+    .placar li {
+      display: grid; gap: 3px; justify-items: center;
+      padding: 9px 2px 7px;
+      background: #eae8e1;
+      border-bottom: 3px solid #dedbd2;
+      text-align: center;
+    }
+    .placar li.acima { border-bottom-color: var(--success); }
+    .placar li.abaixo { border-bottom-color: var(--warning); }
+    .placar li.ultima { background: #dedbd2; }
+    .placar-kg { font-stretch: 62%; font-weight: 800; font-size: 18px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .placar-reps { font-family: var(--font-mono); font-size: 11.5px; color: #565963; white-space: nowrap; }
+    .placar-data { font-family: var(--font-mono); font-size: 10.5px; color: #62666f; }
+
+    /* Telas assentam ao rolar; sem suporte, aparecem prontas */
+    @supports (animation-timeline: view()) {
+      @media (prefers-reduced-motion: no-preference) {
+        .tela-entra {
+          animation: tela-entra linear both;
+          animation-timeline: view();
+          animation-range: entry 0% cover 28%;
+        }
+      }
+    }
+    @keyframes tela-entra { from { opacity: 0.35; transform: translateY(48px) scale(0.97); } }
+
+    /* ── Volume semanal: mapa do corpo + placar de séries (cópia do app) ── */
+    .vol { border-top: 1px solid var(--line-strong); padding-top: 18px; }
+    .vol-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .vol-head h3 { font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; }
+    .vol-segmentado {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: min(100%, 15rem);
+      padding: 2px;
+      background: var(--mesa);
+      border-radius: 8px;
+    }
+    .vol-segmentado[hidden], .vol-sexo[hidden] { display: none; }
+    .vol-segmentado::before {
+      content: '';
+      position: absolute;
+      top: 2px; bottom: 2px; left: 2px;
+      width: calc(50% - 2px);
+      background: var(--paper);
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      transition: transform 220ms var(--ease-out);
+    }
+    .vol-segmentado[data-visao='semana']::before { transform: translateX(100%); }
+    .vol-segmentado button {
+      position: relative;
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      touch-action: manipulation;
+      transition: color 160ms var(--ease-out), transform 100ms var(--ease-out);
+    }
+    .vol-segmentado button:active { transform: scale(0.97); }
+    .vol-segmentado button[aria-pressed='true'] { color: var(--ink); }
+
+    .vol-corpo-placar { display: grid; gap: 32px; margin-top: 24px; align-items: start; }
+    @media (min-width: 860px) { .vol-corpo-placar { grid-template-columns: minmax(0, 26rem) minmax(0, 1fr); gap: 48px; } }
+    .vol-corpo-coluna { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    /* A ilustração tem margem própria: as duas vistas se sobrepõem um pouco.
+       A proporção fica reservada antes do script, para o placar não pular. */
+    .vol-corpo { display: grid; grid-template-columns: 1fr 1fr; width: 100%; aspect-ratio: 722 / 542; }
+    .vol-corpo > :first-child { margin-right: -12%; }
+    .vol-corpo > :last-child { margin-left: -12%; }
+    .vol-corpo svg { display: block; width: 100%; height: auto; }
+    .vol-sexo { display: flex; gap: 16px; }
+    .vol-sexo button {
+      min-height: 32px;
+      border-bottom: 2px solid transparent;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      transition: color 140ms var(--ease-out), border-color 140ms var(--ease-out);
+    }
+    .vol-sexo button[aria-pressed='true'] { color: var(--ink); border-bottom-color: var(--brand); }
+
+    .vol-total { display: flex; align-items: flex-end; gap: 12px; margin-bottom: 16px; }
+    .vol-total strong {
+      font-stretch: 62%;
+      font-weight: 800;
+      font-size: 4.5rem;
+      line-height: 0.82;
+      font-variant-numeric: tabular-nums;
+    }
+    .vol-total span { padding-bottom: 3px; font-size: 14px; line-height: 1.35; color: var(--muted); }
+    .vol-lista { list-style: none; border-top: 1px solid var(--line-strong); }
+    .vol-linha {
+      display: grid;
+      grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr) 2.25rem;
+      align-items: center;
+      gap: 14px;
+      min-height: 42px;
+      padding: 0 4px;
+      border-bottom: 1px solid var(--line);
+      outline: none;
+      transition: background-color 140ms var(--ease-out);
+    }
+    .vol-linha.em-foco { background: var(--paper); }
+    .vol-linha:focus-visible { box-shadow: inset 2px 0 0 var(--brand); }
+    .vol-grupo {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+      transition: color 140ms var(--ease-out);
+    }
+    .vol-linha.em-foco .vol-grupo { color: var(--brand-ink); }
+    .vol-blocos { display: flex; gap: 3px; min-width: 0; }
+    .vol-bloco { flex: 1 1 0; max-width: 1.5rem; height: 16px; border-radius: 1px; background: var(--mesa); }
+    .vol-bloco.cheio { background: var(--brand); }
+    .vol-valor { text-align: right; font-stretch: 62%; font-weight: 800; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+    .vol-dica { margin-top: 14px; font-size: 13.5px; color: var(--muted); }
+    @media (max-width: 420px) {
+      .vol-linha { grid-template-columns: minmax(0, 6.5rem) minmax(0, 1fr) 1.75rem; gap: 10px; }
+    }
+    /* Ao trocar a visão, os blocos acendem de novo em cascata curta */
+    @media (prefers-reduced-motion: no-preference) {
+      .vol-lista.acende .vol-bloco.cheio { animation: vol-bloco-acende 180ms var(--ease-out) both; }
+    }
+    @keyframes vol-bloco-acende { from { opacity: 0; transform: scaleY(0.4); } }
+
+    /* ── Aeróbico: cartão do aluno e explicação do modelo ───────────── */
+    .cardio-grade { display: grid; gap: 40px; align-items: center; }
+    @media (min-width: 920px) { .cardio-grade { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; } }
+    .cardio-texto { display: grid; gap: 16px; align-content: start; }
+    .cardio-tela {
+      display: grid; gap: 16px; align-items: start;
+      padding: 18px;
+      background: #f4f3ef;
+      border: 1px solid var(--line-strong);
+      border-radius: 14px;
+      box-shadow: 0 1px 2px rgba(18, 19, 22, 0.05), 0 12px 32px -8px rgba(18, 19, 22, 0.14);
+      font-size: 13px;
+      color: #121316;
+    }
+    @media (min-width: 640px) { .cardio-tela { grid-template-columns: 1fr 1fr; } }
+    .cardio-cab {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 10px 0; margin-bottom: 12px;
+      border-top: 1px solid rgba(20, 22, 26, 0.20);
+      border-bottom: 1px solid rgba(20, 22, 26, 0.10);
+      font-size: 12.5px;
+    }
+    .cardio-cab svg { color: #A6251A; flex: none; }
+    .cardio-tipo {
+      display: inline-flex; align-items: center; gap: 4px;
+      min-height: 26px; padding: 0 8px; border-radius: 99px;
+      background: rgba(186, 40, 26, 0.10); color: #A6251A;
+      border: 1px solid rgba(186, 40, 26, 0.24);
+      font-size: 11.5px; font-weight: 700;
+    }
+    .cardio-registro {
+      padding: 12px;
+      background: #fff;
+      border: 1px solid rgba(20, 22, 26, 0.10);
+      border-radius: 12px;
+    }
+    .cardio-registro-rotulo { font-family: var(--font-mono); font-size: 10.5px; font-weight: 800; letter-spacing: 0.06em; color: #A6251A; }
+    .cardio-registro-nome { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 3px; font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+    .cardio-meta { margin-top: 8px; font-size: 12px; color: #565963; }
+    .cardio-meta b { color: #121316; }
+    .cardio-feito { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; font-size: 12.5px; color: #565963; }
+    .cardio-feito-campos { display: flex; align-items: center; gap: 8px; }
+    .cardio-minutos {
+      width: 84px; padding: 7px 10px; border-radius: 7px;
+      background: #eae8e1; border: 1px solid rgba(20, 22, 26, 0.10);
+      font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: #121316;
+      font-variant-numeric: tabular-nums;
+    }
+    .cardio-minutos small { font-size: 10px; color: #62666f; margin-left: 3px; }
+    .cardio-explicacao {
+      padding: 18px;
+      background: #fff;
+      border: 1px solid rgba(20, 22, 26, 0.12);
+      border-radius: 14px;
+      box-shadow: 0 12px 28px -12px rgba(18, 19, 22, 0.25);
+    }
+    .cardio-explicacao-topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .cardio-explicacao h4 { font-size: 17px; font-weight: 700; }
+    .cardio-explicacao-topo svg { color: #62666f; }
+    .cardio-explicacao p { font-size: 13.5px; line-height: 1.55; }
+    .cardio-explicacao dl { display: grid; gap: 9px; margin-top: 14px; }
+    .cardio-explicacao dt { font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #62666f; }
+    .cardio-explicacao dd { margin-top: 2px; font-size: 12.5px; color: #565963; line-height: 1.45; }
+    .cardio-entendido {
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 16px; height: 40px; border-radius: 8px;
+      background: #BA281A; color: #fff; font-size: 13.5px; font-weight: 650;
+    }
+
+    /* ── Treinador em dois aparelhos: notebook + celular ─────────────────
+       As telas são desenhadas numa largura fixa e escaladas para a moldura
+       com container-type: inline-size (técnica do guia, seção 7). */
+    .disp { position: relative; max-width: 1040px; margin: 0 auto 72px; padding-bottom: 28px; }
+    .laptop { width: 80%; }
+    .laptop-tampa {
+      padding: 10px 10px 11px;
+      background: #050505;
+      border-radius: 20px 20px 4px 4px;
+      box-shadow: 0 0 0 1.5px #b9b6ae, 0 2px 4px 1.5px rgba(18, 19, 22, 0.18);
+    }
+    .laptop-tela {
+      container-type: inline-size;
+      position: relative;
+      aspect-ratio: 1000 / 650;
+      overflow: hidden;
+      background: #f4f3ef;
+      border-radius: 9px;
+    }
+    /* Base de alumínio com o encaixe para o dedo, como nos MacBooks */
+    .laptop-base {
+      position: relative;
+      width: 112%; margin-left: -6%;
+      height: 15px;
+      background: linear-gradient(#e4e2db, #c3c0b7);
+      border-radius: 0 0 18px 18px / 0 0 12px 12px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 2px rgba(18, 19, 22, 0.2);
+    }
+    .laptop-base::before {
+      content: '';
+      position: absolute; top: 0; left: 50%;
+      width: 16%; height: 6px; margin-left: -8%;
+      background: #a9a69d;
+      border-radius: 0 0 10px 10px;
+    }
+    .cel2 { position: absolute; right: 0; bottom: 0; width: clamp(150px, 22%, 236px); }
+    .cel2-aro {
+      position: relative;
+      padding: 5px;
+      background: #050505;
+      border-radius: 14% / 6.5%;
+      box-shadow: 0 0 0 1.5px #8a8782, 0 1px 2px rgba(18, 19, 22, 0.1), 0 16px 36px -10px rgba(18, 19, 22, 0.35);
+    }
+    .cel2-aro::before, .cel2-aro::after { content: ''; position: absolute; width: 2.5px; }
+    .cel2-aro::before {
+      left: -4px; top: 14%; height: 34%; border-radius: 2px 0 0 2px;
+      background: linear-gradient(#7b7873 0 15%, transparent 15% 26%, #7b7873 26% 60%, transparent 60% 70%, #7b7873 70% 100%);
+    }
+    .cel2-aro::after {
+      right: -4px; top: 22%; height: 26%; border-radius: 0 2px 2px 0;
+      background: linear-gradient(#7b7873 0 40%, transparent 40% 78%, #7b7873 78% 100%);
+    }
+    .cel2-tela {
+      container-type: inline-size;
+      position: relative;
+      aspect-ratio: 300 / 650;
+      overflow: hidden;
+      background: #f4f3ef;
+      border-radius: 13% / 6%;
+    }
+    .ui {
+      position: absolute; left: 0; top: 0;
+      transform-origin: 0 0;
+      color: #121316;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+    .ui-desk { width: 1000px; height: 650px; transform: scale(tan(atan2(100cqw, 1000px))); }
+    /* Barra de menus do macOS e o notch da câmera */
+    .ui-menubar {
+      position: absolute; top: 0; left: 0; right: 0; height: 24px;
+      display: flex; align-items: center; gap: 18px;
+      padding: 0 18px;
+      background: #0b0b0b; color: #ececec;
+      font-size: 12.5px; font-weight: 500;
+    }
+    .ui-menubar b { font-weight: 700; }
+    .ui-menubar .dir { margin-left: auto; display: flex; gap: 14px; }
+    .ui-notch {
+      position: absolute; top: 0; left: 50%;
+      width: 118px; height: 24px; margin-left: -59px;
+      background: #000; border-radius: 0 0 12px 12px;
+      z-index: 5;
+    }
+    .ui-notch::after {
+      content: '';
+      position: absolute; top: 8px; left: 50%;
+      width: 7px; height: 7px; margin-left: -3px;
+      border-radius: 50%;
+      background: #15171c; box-shadow: inset 0 0 0 1px #262a33;
+    }
+    .ui-janela { position: absolute; left: 0; right: 0; top: 24px; bottom: 0; overflow: hidden; }
+    .ui-cel { width: 300px; height: 650px; transform: scale(tan(atan2(100cqw, 300px))); }
+    .ui-ilha { position: absolute; top: 9px; left: 50%; width: 94px; height: 27px; margin-left: -47px; border-radius: 16px; background: #000; z-index: 10; }
+    .ui-home { position: absolute; bottom: 6px; left: 50%; width: 104px; height: 4px; margin-left: -52px; border-radius: 3px; background: #121316; opacity: 0.9; z-index: 10; }
+    .sbi { display: flex; align-items: flex-end; gap: 2px; }
+    .sbi i { display: block; background: #f1f1f1; border-radius: 1px; }
+    .ui svg { fill: currentColor; flex: none; }
+
+    /* Barra do topo: sempre escura, com o filete vermelho */
+    .ui-topo {
+      position: relative;
+      height: 48px;
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 20px;
+      background: #0f0f0f; color: #f1f1f1;
+      box-shadow: inset 0 2px 0 #CF3427;
+    }
+    .ui-topo .logo { font-size: 14px; gap: 8px; }
+    .ui-busca {
+      margin: 0 auto;
+      width: 340px; height: 30px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 10px;
+      background: #272727; border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 8px;
+      color: #aaaaaa; font-size: 13px;
+    }
+    .ui-busca kbd {
+      margin-left: auto; padding: 0 6px;
+      font-family: var(--font-mono); font-size: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 4px; color: #aaaaaa;
+    }
+    .ui-busca svg { width: 18px; height: 18px; }
+    .ui-topo-dir { width: 100px; display: flex; justify-content: flex-end; gap: 8px; }
+    .ui-ibtn { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.14); color: #aaaaaa; }
+    .ui-ibtn svg { width: 18px; height: 18px; }
+
+    /* Menu lateral fixo: ícone com o nome embaixo */
+    .ui-trilho {
+      position: absolute; left: 0; top: 48px; bottom: 0; width: 76px;
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 8px 6px;
+      background: #fff;
+      border-right: 1px solid rgba(20, 22, 26, 0.10);
+    }
+    .ui-item {
+      height: 62px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      border-radius: 8px;
+      font-size: 11px; font-weight: 600; color: #62666f;
+    }
+    .ui-item svg { width: 20px; height: 20px; }
+    .ui-item.ativo { background: #eae8e1; color: #121316; }
+    .ui-item.ativo svg { color: #BA281A; }
+    .ui-item.fim { margin-top: auto; }
+
+    .ui-conteudo { position: absolute; left: 76px; right: 0; top: 48px; bottom: 0; padding: 26px 30px; }
+    .ui-cab { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+    .ui-cab h4 { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+    .ui-cab p { font-size: 13px; color: #565963; margin-top: 3px; }
+    .ui-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 34px; padding: 0 14px; border-radius: 8px;
+      background: #BA281A; color: #fff; font-size: 13px; font-weight: 650;
+    }
+    .ui-colunas, .ui-aluno {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) 230px 170px;
+      align-items: center; gap: 14px;
+    }
+    .ui-colunas {
+      margin-top: 22px; padding: 0 2px 8px;
+      border-bottom: 1px solid rgba(20, 22, 26, 0.20);
+      font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #565963;
+    }
+    .ui-aluno { padding: 12px 2px; border-bottom: 1px solid rgba(20, 22, 26, 0.10); }
+    .ui-iniciais {
+      width: 36px; height: 36px; border-radius: 99px;
+      display: grid; place-items: center;
+      background: #dedbd2; color: #121316;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+    }
+    .ui-nome { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+    .ui-contato { font-size: 12.5px; color: #565963; }
+    .ui-plano b { display: block; font-size: 13.5px; font-weight: 650; }
+    .ui-plano span { font-family: var(--font-mono); font-size: 12px; color: #565963; }
+    .ui-plano .vazia { font-family: var(--font); font-style: italic; }
+    .ui-plano .vencida { color: #b42318; }
+    .ui-selo {
+      display: inline-flex; align-items: center;
+      height: 22px; padding: 0 9px; border-radius: 99px;
+      font-size: 12px; font-weight: 600;
+    }
+    .ui-selo.ok { background: rgba(45, 168, 104, 0.12); border: 1px solid rgba(45, 168, 104, 0.28); color: #156642; }
+    .ui-selo.espera { background: #eae8e1; border: 1px solid rgba(20, 22, 26, 0.12); color: #565963; }
+
+    /* Celular do treinador: ficha do aluno e barra de abas embaixo */
+    .ui-cel .ui-topo { height: 46px; padding: 0 16px; }
+    .ui-cel .ui-topo .logo { font-size: 13px; }
+    .ui-cel .lupa { margin-left: auto; width: 20px; height: 20px; }
+    .ui-cel .status { height: 42px; display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 28px 0; background: #0f0f0f; color: #f1f1f1; font-size: 13px; font-weight: 650; }
+    .ui-cel .corpo { padding: 14px 16px; }
+    .ui-cel .migalha { font-family: var(--font-mono); font-size: 10.5px; color: #62666f; }
+    .ui-cel .migalha b { color: #121316; }
+    .ui-cel h4 { margin-top: 6px; font-size: 20px; font-weight: 800; letter-spacing: -0.03em; }
+    .ui-cel .abas { display: flex; gap: 18px; margin-top: 10px; border-bottom: 1px solid rgba(20, 22, 26, 0.10); font-size: 13px; font-weight: 600; color: #565963; }
+    .ui-cel .abas span { padding: 8px 0; }
+    .ui-cel .abas .ativa { color: #121316; box-shadow: inset 0 -2px 0 #BA281A; }
+    .ui-cel .abas .nova { color: #A6251A; }
+    /* Como no app: as abas rolam para os lados e o "Ordenar" fica fixo */
+    .ui-cel .abas-rolam { display: flex; gap: 18px; flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; }
+    .ui-cel .abas .ordem { flex: none; padding-left: 12px; color: #A6251A; white-space: nowrap; box-shadow: -10px 0 8px -6px #f4f3ef; }
+    .ui-cel .sub { font-size: 12.5px; color: #565963; margin-top: 2px; }
+    .ui-ex { padding: 11px 0; border-bottom: 1px solid rgba(20, 22, 26, 0.10); }
+    .ui-ex-1 { display: flex; align-items: baseline; gap: 9px; }
+    .ui-ex-n { font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; color: #62666f; }
+    .ui-ex-nome { font-size: 14px; font-weight: 650; letter-spacing: -0.01em; }
+    .ui-ex-2 { display: flex; align-items: center; gap: 6px; margin: 7px 0 0 24px; font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
+    .ui-ex-2 .tag { padding: 2px 6px; border-radius: 5px; background: #eae8e1; color: #565963; font-weight: 600; }
+    .ui-ex-2 .tag.tec { background: rgba(186, 40, 26, 0.08); color: #A6251A; }
+    .ui-tabbar {
+      position: absolute; left: 0; right: 0; bottom: 0; height: 74px; padding-bottom: 14px;
+      display: flex; justify-content: space-around; align-items: stretch;
+      background: #fff; border-top: 1px solid rgba(20, 22, 26, 0.10);
+    }
+    .ui-tabbar span {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+      font-size: 10.5px; font-weight: 600; color: #62666f;
+    }
+    .ui-tabbar svg { width: 22px; height: 22px; }
+    .ui-tabbar .ativo { color: #A6251A; }
+
+    /* Abas do notebook: trocam a tela entre alunos, biblioteca e volume */
+    .disp-abas {
+      display: grid; grid-template-columns: repeat(4, auto);
+      width: max-content; max-width: 100%;
+      margin: 0 auto 28px; padding: 3px;
+      background: var(--mesa); border-radius: 10px;
+    }
+    .disp-abas[hidden] { display: none; }
+    .disp-abas button {
+      min-height: 40px; padding: 0 18px; border-radius: 7px;
+      font-size: 14px; font-weight: 600; color: var(--muted);
+      touch-action: manipulation;
+      transition: color 160ms var(--ease-out), background-color 160ms var(--ease-out), transform 100ms var(--ease-out);
+    }
+    .disp-abas button:active { transform: scale(0.97); }
+    .disp-abas button[aria-pressed='true'] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--line-strong); }
+    @media (hover: hover) and (pointer: fine) {
+      .disp-abas button[aria-pressed='false']:hover { color: var(--ink); }
+      [data-ir], .ui-cat-aba, [data-modal-abrir], [data-modal-fechar], [data-modal-adicionar] { cursor: pointer; }
+      .ui-aluno[data-ir]:hover { background: #fff; }
+      .ui-item[data-ir]:not(.ativo):hover { color: #121316; }
+      .ui-cat-aba:not(.ativa):hover { color: #121316; }
+    }
+
+    @media (max-width: 639px) {
+      .disp { margin-bottom: 48px; padding-bottom: 0; }
+      .disp-abas button { padding: 0 11px; font-size: 13px; }
+      .laptop { width: 100%; }
+      /* A base mais larga que a tela passaria da margem e rolaria a página */
+      .laptop-base { width: 104%; margin-left: -2%; }
+      .cel2 { position: static; width: min(100%, 260px); margin: 40px auto 0; }
+    }
+
+    /* Telas do notebook (o desenho é em 1000px e escala com a moldura) */
+    .ui-conteudo[hidden], .ui-tabela[hidden] { display: none; }
+    .ui-aluno[data-ir] { transition: background-color 140ms var(--ease-out); }
+    .ui-sobre { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; font-family: var(--font-mono); font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: #A6251A; }
+    .ui-sobre i { width: 7px; height: 7px; border-radius: 1.5px; background: #BA281A; }
+    .ui-cat-abas { display: flex; gap: 24px; margin-top: 18px; border-bottom: 1px solid rgba(20, 22, 26, 0.10); }
+    .ui-cat-aba {
+      display: inline-flex; align-items: center; gap: 7px;
+      height: 42px; margin-bottom: -1px;
+      border-bottom: 2px solid transparent;
+      font-size: 14px; font-weight: 600; color: #62666f;
+      transition: color 140ms var(--ease-out), border-color 140ms var(--ease-out);
+    }
+    .ui-cat-aba svg { width: 16px; height: 16px; }
+    .ui-cat-aba.ativa { color: #121316; border-bottom-color: #BA281A; }
+    .ui-cat-aba.ativa svg { color: #BA281A; }
+    .ui-filtros { display: flex; gap: 10px; margin-top: 16px; }
+    .ui-seletor, .ui-busca-cat {
+      height: 36px; display: flex; align-items: center; gap: 8px;
+      padding: 0 14px; border-radius: 8px;
+      background: #eae8e1; border: 1px solid rgba(20, 22, 26, 0.10);
+      font-size: 13.5px;
+    }
+    .ui-seletor { width: 190px; justify-content: space-between; }
+    .ui-seletor[hidden] { display: none; }
+    .ui-seletor svg { width: 12px; height: 12px; transform: rotate(90deg); color: #62666f; }
+    .ui-busca-cat { width: 320px; }
+    .ui-busca-cat [data-bib-busca]:empty::before { content: 'Buscar por nome...'; color: #8a8d95; }
+    .ui-cursor { width: 1.5px; height: 18px; margin-left: -6px; background: #121316; }
+    @media (prefers-reduced-motion: no-preference) {
+      .ui-cursor { animation: ui-pisca 1.1s steps(1) infinite; }
+    }
+    @keyframes ui-pisca { 50% { opacity: 0; } }
+    .ui-tabela { margin-top: 14px; }
+    .ui-linha {
+      display: grid; align-items: center; gap: 16px;
+      min-height: 52px; padding: 8px 4px;
+      border-bottom: 1px solid rgba(20, 22, 26, 0.10);
+      font-size: 13.5px;
+    }
+    .ui-linha.cab {
+      min-height: 0; padding-top: 0;
+      border-bottom-color: rgba(20, 22, 26, 0.20);
+      font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #565963;
+    }
+    .ui-linha.cab > :last-child { text-align: right; }
+    .ui-linha b { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+    .ui-linha.ex { grid-template-columns: 250px 150px minmax(0, 1fr) 90px; }
+    .ui-linha.gr { grid-template-columns: minmax(0, 1fr) 240px 90px; min-height: 46px; padding-block: 4px; }
+    .ui-linha.tec { grid-template-columns: 150px minmax(0, 1fr) 90px; }
+    .ui-linha.ins { grid-template-columns: minmax(0, 1fr) 90px; }
+    .ui-badge {
+      display: inline-flex; padding: 3px 9px; border-radius: 99px;
+      font-size: 12px; font-weight: 600;
+      background: rgba(186, 40, 26, 0.08); color: #A6251A; border: 1px solid rgba(186, 40, 26, 0.24);
+    }
+    .ui-badge.cinza { background: transparent; color: #565963; border-color: rgba(20, 22, 26, 0.14); }
+    .ui-det { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .ui-video { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 7px; color: #A6251A; background: rgba(186, 40, 26, 0.08); }
+    .ui-video svg { width: 15px; height: 15px; }
+    .ui-desc { min-width: 0; color: #565963; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ui-desc.vazio { color: #8a8d95; }
+    .ui-acoes { display: flex; justify-content: flex-end; gap: 4px; color: #565963; }
+    .ui-acoes > span { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 7px; }
+    .ui-acoes svg { width: 15px; height: 15px; }
+    .ui-acoes .perigo { color: #b42318; }
+    /* Miniatura do músculo na aba Grupos, como no app */
+    .ui-mini { width: 36px; height: 36px; flex: none; display: grid; place-items: center; }
+    .ui-mini svg { display: block; width: 100%; height: auto; }
+
+    /* Passo 01: a janela de prescrição no meio do uso, com a busca aberta */
+    .janela-corpo.pres { display: grid; gap: 12px; padding: 18px 20px 20px; }
+    .pres-busca { display: grid; gap: 4px; }
+    .ui-in.foco { justify-content: flex-start; border-color: #BA281A; box-shadow: 0 0 0 3px rgba(186, 40, 26, 0.14); }
+    .ui-in.foco .ui-cursor { margin-left: 1px; }
+    .ui-in.vazio { color: #8a8d95; }
+    .pres-lista {
+      list-style: none; padding: 4px;
+      background: #fff; border: 1px solid rgba(20, 22, 26, 0.14); border-radius: 9px;
+      box-shadow: 0 14px 32px -10px rgba(18, 19, 22, 0.28);
+    }
+    .pres-lista li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 6px; font-size: 13px; }
+    .pres-lista li.ativo { background: #eae8e1; }
+    .pres-lista small { font-size: 11.5px; color: #62666f; }
+    @media (max-width: 640px) {
+      .janela-corpo.pres .ui-modal-grade.tres { grid-template-columns: 1fr 1fr; }
+      .janela-corpo.pres .ui-modal-grade.tres > :last-child { grid-column: span 2; }
+    }
+
+    /* Montagem da ficha (tela de treinos do app) */
+    .ui-ficha .migalha { font-size: 11.5px; }
+    .ui-ficha-cab { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+    .ui-ficha-cab h4 { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+    .ui-ficha-cab p { font-size: 12.5px; color: #565963; }
+    .ui-voltar { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; color: #565963; }
+    .ui-voltar svg { width: 16px; height: 16px; transform: rotate(180deg); }
+    .ui-ficha-botoes { margin-left: auto; display: flex; gap: 8px; }
+    .ui-visao { display: inline-flex; margin-top: 12px; padding: 2px; background: #eae8e1; border: 1px solid rgba(20, 22, 26, 0.10); border-radius: 8px; }
+    .ui-visao span { padding: 5px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; color: #565963; }
+    .ui-visao .ativa { background: #fff; color: #121316; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); }
+    .ui-ficha .ficha-abas { margin-top: 6px; }
+    .ui-ficha .ficha-abas span.ordem { margin-left: auto; }
+    .ui-ficha-barra { display: flex; justify-content: space-between; align-items: center; margin: 10px 0 8px; }
+    .ui-ficha-barra h5 { font-size: 14px; font-weight: 600; }
+    .ui-ficha-acoes { display: flex; gap: 6px; }
+    .ui-mini-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      height: 28px; padding: 0 10px; border-radius: 7px;
+      font-size: 11.5px; font-weight: 600; color: #565963;
+    }
+    .ui-mini-btn svg { width: 13px; height: 13px; }
+    .ui-mini-btn.primario { background: #BA281A; color: #fff; }
+    .ui-mini-btn.perigo { color: #b42318; }
+    .ui-mini-btn.grande { height: 36px; padding: 0 16px; font-size: 13px; border: 1px solid rgba(20, 22, 26, 0.16); color: #121316; }
+    .ui-mini-btn.grande.primario { border-color: #BA281A; color: #fff; }
+    /* Convite discreto para clicar, até o primeiro clique */
+    @media (prefers-reduced-motion: no-preference) {
+      .ui-mini-btn.chama { animation: ui-chama 2.2s var(--ease-out) 1s infinite; }
+    }
+    @keyframes ui-chama { 0% { box-shadow: 0 0 0 0 rgba(186, 40, 26, 0.45); } 70%, 100% { box-shadow: 0 0 0 9px rgba(186, 40, 26, 0); } }
+    .ui-ex-pilha { border-top: 1px solid rgba(20, 22, 26, 0.20); }
+    .ui-ex-bloco {
+      display: flex; align-items: center; gap: 14px;
+      padding: 7px 8px 7px 6px;
+      border-bottom: 1px solid rgba(20, 22, 26, 0.10);
+    }
+    .ui-ex-bloco.novo { animation: ui-entra 420ms var(--ease-out-expo) both; }
+    @keyframes ui-entra { from { opacity: 0; transform: translateY(-6px); background: rgba(186, 40, 26, 0.08); } }
+    .ui-alca { display: flex; align-items: center; gap: 2px; color: #8a8d95; font-size: 12px; }
+    .ui-alca i { width: 8px; height: 13px; margin-right: 4px; background: radial-gradient(circle, #8a8d95 1.2px, transparent 1.5px) 0 0 / 4px 4.5px; }
+    .ui-alca b { width: 20px; text-align: center; font-weight: 400; }
+    .ui-ex-ind { min-width: 22px; font-family: var(--font-mono); font-size: 12.5px; font-weight: 700; color: #A6251A; }
+    .ui-ex-info { flex: 1; min-width: 0; }
+    .ui-ex-nome { font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em; }
+    .ui-ex-det { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
+    .ui-tag { padding: 2px 7px; border-radius: 4px; font-size: 11px; color: #565963; background: #eae8e1; }
+    .ui-tag.tec { color: #A6251A; background: rgba(186, 40, 26, 0.08); font-weight: 600; }
+    .ui-nota { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-style: italic; color: #565963; }
+    .ui-nota svg { width: 12px; height: 12px; }
+    .ui-ex-num { display: grid; justify-items: end; gap: 2px; min-width: 80px; }
+    .ui-ex-num b { font-family: var(--font-mono); font-size: 15px; font-weight: 700; }
+    .ui-ex-num span { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; color: #565963; }
+    .ui-ex-num svg { width: 12px; height: 12px; }
+    /* Janela de prescrição sobre a ficha */
+    .ui-modal-fundo { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(15, 15, 15, 0.42); }
+    .ui-modal-fundo[hidden] { display: none; }
+    .ui-modal {
+      width: 520px; display: grid; gap: 11px;
+      padding: 20px 22px;
+      background: #f4f3ef; border-radius: 14px;
+      box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.45);
+      animation: ui-modal-entra 240ms var(--ease-out) both;
+    }
+    @keyframes ui-modal-entra { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+    .ui-modal-cab { display: flex; justify-content: space-between; align-items: flex-start; }
+    .ui-modal-cab h5 { font-size: 17px; font-weight: 700; }
+    .ui-fechar { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 7px; color: #565963; }
+    .ui-fechar svg { width: 16px; height: 16px; }
+    .ui-campo-l { display: grid; gap: 4px; }
+    .ui-rot { font-size: 11.5px; font-weight: 600; color: #565963; }
+    .ui-in {
+      height: 34px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 11px; border-radius: 8px;
+      background: #fff; border: 1px solid rgba(20, 22, 26, 0.16);
+      font-size: 13px;
+    }
+    .ui-in.sel svg { width: 11px; height: 11px; transform: rotate(90deg); color: #62666f; }
+    .ui-modal-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .ui-modal-grade.tres { grid-template-columns: 1fr 1fr 1fr; }
+    .ui-modal-rodape { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+
+    /* Volume semanal dentro do notebook: a mesma peça, em tamanho de tela */
+    .ui-vol .migalha { font-size: 11.5px; }
+    .ui-vol .ui-cab { margin-top: 6px; }
+    .ui-vol .ficha-abas { margin-top: 8px; }
+    .ui .vol { margin-top: 14px; padding-top: 12px; }
+    .ui .vol-head h3 { font-size: 15px; }
+    .ui .vol-segmentado { width: 200px; }
+    .ui .vol-segmentado button { min-height: 28px; font-size: 12.5px; }
+    .ui .vol-corpo-placar { grid-template-columns: 330px minmax(0, 1fr); gap: 36px; margin-top: 10px; }
+    .ui .vol-corpo-coluna { gap: 4px; }
+    .ui .vol-sexo button { min-height: 24px; font-size: 11.5px; }
+    .ui .vol-total { margin-bottom: 8px; }
+    .ui .vol-total strong { font-size: 44px; }
+    .ui .vol-total span { font-size: 12.5px; }
+    .ui .vol-linha { grid-template-columns: 110px minmax(0, 1fr) 28px; gap: 12px; min-height: 26px; }
+    .ui .vol-grupo { font-size: 11.5px; }
+    .ui .vol-bloco { height: 12px; }
+    .ui .vol-valor { font-size: 17px; }
+
+    /* ── Listas com fio (recursos) ───────────────────────────────────── */
+    .recursos {
+      list-style: none;
+      display: grid;
+      border-top: 1px solid var(--line);
+    }
+    @media (min-width: 768px) {
+      .recursos { grid-template-columns: 1fr 1fr; column-gap: 48px; }
+    }
+    .recursos li {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      align-content: start;
+      gap: 4px 14px;
+      padding-block: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .recursos .ico { grid-row: span 2; color: var(--ink); padding-top: 2px; }
+    .recursos .ico svg { width: 22px; height: 22px; }
+    .recursos h3 { font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+    .recursos p { color: var(--muted); font-size: 15px; }
+
+    /* ── Assinatura vencida: tabela sem moldura ──────────────────────── */
+    .vencimento { display: grid; gap: 48px; }
+    @media (min-width: 920px) { .vencimento { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: start; } }
+    .tabela { width: 100%; border-collapse: collapse; font-size: 15px; }
+    .tabela th {
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 12px 10px 0;
+      border-bottom: 1px solid var(--line-strong);
+    }
+    .tabela td { padding: 16px 12px 16px 0; border-bottom: 1px solid var(--wash-line); vertical-align: top; }
+    .tabela td:first-child { font-weight: 700; white-space: nowrap; padding-right: 20px; }
+    .tabela td:first-child small { display: block; font-family: var(--font-mono); font-weight: 600; font-size: 12px; color: var(--muted); }
+    .tabela .aviso-aluno { font-style: italic; }
+    @media (max-width: 640px) {
+      .tabela thead { display: none; }
+      .tabela tr { display: grid; gap: 6px; padding-block: 16px; border-bottom: 1px solid var(--wash-line); }
+      .tabela td { padding: 0; border: 0; }
+      .tabela td[data-r]::before {
+        content: attr(data-r);
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--muted);
+      }
+    }
+    .nota-pequena { font-size: 13.5px; color: var(--muted); margin-top: 16px; }
+
+    /* ── Planos ──────────────────────────────────────────────────────── */
+    .planos { display: grid; gap: 20px; }
+    @media (min-width: 860px) { .planos { grid-template-columns: 7fr 5fr; align-items: stretch; } }
+    .plano {
+      border-radius: 16px;
+      padding: 28px 24px;
+      display: grid;
+      gap: 22px;
+      align-content: start;
+    }
+    @media (min-width: 640px) { .plano { padding: 36px 36px 32px; } }
+    .plano.escuro {
+      background: var(--d-0);
+      color: var(--d-text);
+      box-shadow: inset 0 3px 0 var(--d-brand);
+    }
+    .plano.claro { background: var(--white); border: 1px solid var(--line); }
+    .plano-cab { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+    .plano-nome { font-size: 1.375rem; font-weight: 800; letter-spacing: -0.03em; }
+    .plano-para { font-size: 15px; color: var(--muted); margin-top: 4px; }
+    .plano.escuro .plano-para { color: var(--d-muted); }
+    .preco { display: flex; align-items: flex-end; gap: 6px; }
+    .preco-valor {
+      font-stretch: 62%;
+      font-weight: 800;
+      font-size: 72px;
+      line-height: 0.82;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .preco-valor sup { font-size: 24px; vertical-align: top; margin-right: 4px; line-height: 1.4; }
+    .preco-periodo { font-family: var(--font-mono); font-size: 14px; color: var(--muted); padding-bottom: 6px; }
+    .plano.escuro .preco-periodo { color: var(--d-muted); }
+    .plano-itens { list-style: none; display: grid; border-top: 1px solid var(--line); }
+    .plano.escuro .plano-itens { border-top-color: var(--d-line); }
+    .plano-itens li {
+      display: flex; gap: 12px; align-items: baseline;
+      padding-block: 11px;
+      border-bottom: 1px solid var(--line);
+      font-size: 15px;
+    }
+    .plano.escuro .plano-itens li { border-bottom-color: var(--d-line); }
+    .plano-itens li svg { flex: none; width: 15px; height: 15px; transform: translateY(2px); color: var(--brand-ink); }
+    .plano.escuro .plano-itens li svg { color: var(--d-brand-text); }
+    .plano-itens li.nao { color: var(--muted); }
+    .plano-itens li.nao svg { color: var(--muted); }
+    .plano-rodape { display: grid; gap: 12px; justify-items: start; }
+    .plano-obs { font-size: 13.5px; color: var(--d-muted); max-width: 52ch; }
+    .selo-breve {
+      padding: 4px 10px; border-radius: 99px;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--muted); background: var(--mesa); border: 1px solid var(--line);
+    }
+    .faixa-aluno-gratis {
+      margin-top: 20px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--white);
+      display: grid; gap: 4px;
+    }
+    @media (min-width: 768px) { .faixa-aluno-gratis { grid-template-columns: auto 1fr; gap: 20px; align-items: center; } }
+    .faixa-aluno-gratis strong { font-size: 1.0625rem; letter-spacing: -0.01em; }
+    .faixa-aluno-gratis p { color: var(--muted); font-size: 15px; }
+
+    /* ── Perguntas ───────────────────────────────────────────────────── */
+    .faq { max-width: 820px; border-top: 1px solid var(--line); }
+    .faq details { border-bottom: 1px solid var(--line); interpolate-size: allow-keywords; }
+    .faq summary {
+      list-style: none;
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      padding: 20px 0;
+      cursor: pointer;
+      font-size: 1.0625rem; font-weight: 650; letter-spacing: -0.01em;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary .mais { flex: none; width: 14px; height: 14px; position: relative; color: var(--muted); }
+    .faq summary .mais::before, .faq summary .mais::after {
+      content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; margin-top: -0.75px;
+      background: currentColor; transition: transform 0.25s var(--ease-out-expo);
+    }
+    .faq summary .mais::after { transform: rotate(90deg); }
+    .faq details[open] summary .mais::after { transform: rotate(0deg); }
+    .faq details::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition: block-size 0.3s var(--ease-out-expo), content-visibility 0.3s allow-discrete;
+    }
+    .faq details[open]::details-content { block-size: auto; }
+    .faq .resposta { padding: 0 32px 22px 0; color: var(--muted); max-width: 66ch; }
+    @media (hover: hover) and (pointer: fine) {
+      .faq summary:hover .mais { color: var(--ink); }
+    }
+
+    /* ── Chamada final e rodapé ──────────────────────────────────────── */
+    .final {
+      background: var(--d-0);
+      color: var(--d-text);
+      padding-block: 96px 88px;
+      border-top: 1px solid var(--d-line);
+    }
+    .final-grade { display: grid; gap: 28px; justify-items: start; }
+    .final .titulo-secao { max-width: 18ch; }
+    .rodape {
+      background: var(--d-0);
+      color: var(--d-muted);
+      border-top: 1px solid var(--d-line);
+      padding-block: 28px calc(28px + env(safe-area-inset-bottom, 0px));
+      font-size: 13.5px;
+    }
+    .rodape-linha { display: flex; flex-wrap: wrap; gap: 16px 28px; justify-content: space-between; align-items: center; }
+    .rodape .logo { color: var(--d-text); font-size: 14px; }
+    .rodape nav { display: flex; flex-wrap: wrap; gap: 20px; }
+    .rodape a { text-decoration: none; }
+    @media (hover: hover) and (pointer: fine) { .rodape nav a:hover { color: var(--d-text); } }
+
+    /* ── Toque e acessibilidade ──────────────────────────────────────── */
+    @media (pointer: coarse) {
+      .btn, .link-entrar { min-height: 44px; }
+      .link-entrar { display: inline-flex; align-items: center; }
+      .faq summary { min-height: 44px; }
+    }
+    @media (prefers-contrast: more) {
+      :root { --line: rgba(20, 22, 26, 0.24); --line-strong: rgba(20, 22, 26, 0.4); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Bloco da logo reaproveitado no topo, nas janelas e no rodapé -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="logo-marca" viewBox="0 0 68 68">
+      <rect x="14" y="36" width="10" height="20" rx="1.5" fill="currentColor" />
+      <rect x="29" y="26" width="10" height="30" rx="1.5" fill="currentColor" />
+      <path d="M44 14L54 22V56H44V14Z" fill="#CF3427" />
+    </symbol>
+    <symbol id="p-House" viewBox="0 0 256 256"><path fill="currentColor" d="M222.14,105.85l-80-80a20,20,0,0,0-28.28,0l-80,80A19.86,19.86,0,0,0,28,120v96a12,12,0,0,0,12,12h64a12,12,0,0,0,12-12V164h24v52a12,12,0,0,0,12,12h64a12,12,0,0,0,12-12V120A19.86,19.86,0,0,0,222.14,105.85ZM204,204H164V152a12,12,0,0,0-12-12H104a12,12,0,0,0-12,12v52H52V121.65l76-76,76,76Z"/></symbol>
+    <symbol id="p-Users" viewBox="0 0 256 256"><path fill="currentColor" d="M125.18,156.94a64,64,0,1,0-82.36,0,100.23,100.23,0,0,0-39.49,32,12,12,0,0,0,19.35,14.2,76,76,0,0,1,122.64,0,12,12,0,0,0,19.36-14.2A100.33,100.33,0,0,0,125.18,156.94ZM44,108a40,40,0,1,1,40,40A40,40,0,0,1,44,108Zm206.1,97.67a12,12,0,0,1-16.78-2.57A76.31,76.31,0,0,0,172,172a12,12,0,0,1,0-24,40,40,0,1,0-10.3-78.67,12,12,0,1,1-6.16-23.19,64,64,0,0,1,57.64,110.8,100.23,100.23,0,0,1,39.49,32A12,12,0,0,1,250.1,205.67Z"/></symbol>
+    <symbol id="p-Barbell" viewBox="0 0 256 256"><path fill="currentColor" d="M244,116V88a20,20,0,0,0-20-20H208V64a20,20,0,0,0-20-20H164a20,20,0,0,0-20,20v52H112V64A20,20,0,0,0,92,44H68A20,20,0,0,0,48,64v4H32A20,20,0,0,0,12,88v28a12,12,0,0,0,0,24v28a20,20,0,0,0,20,20H48v4a20,20,0,0,0,20,20H92a20,20,0,0,0,20-20V140h32v52a20,20,0,0,0,20,20h24a20,20,0,0,0,20-20v-4h16a20,20,0,0,0,20-20V140a12,12,0,0,0,0-24ZM36,164V92H48v72Zm52,24H72V68H88Zm96,0H168V68h16Zm36-24H208V92h12Z"/></symbol>
+    <symbol id="p-Gear" viewBox="0 0 256 256"><path fill="currentColor" d="M128,76a52,52,0,1,0,52,52A52.06,52.06,0,0,0,128,76Zm0,80a28,28,0,1,1,28-28A28,28,0,0,1,128,156Zm92-27.21v-1.58l14-17.51a12,12,0,0,0,2.23-10.59A111.75,111.75,0,0,0,225,71.89,12,12,0,0,0,215.89,66L193.61,63.5l-1.11-1.11L190,40.1A12,12,0,0,0,184.11,31a111.67,111.67,0,0,0-27.23-11.27A12,12,0,0,0,146.3,22L128.79,36h-1.58L109.7,22a12,12,0,0,0-10.59-2.23A111.75,111.75,0,0,0,71.89,31.05,12,12,0,0,0,66,40.11L63.5,62.39,62.39,63.5,40.1,66A12,12,0,0,0,31,71.89,111.67,111.67,0,0,0,19.77,99.12,12,12,0,0,0,22,109.7l14,17.51v1.58L22,146.3a12,12,0,0,0-2.23,10.59,111.75,111.75,0,0,0,11.29,27.22A12,12,0,0,0,40.11,190l22.28,2.48,1.11,1.11L66,215.9A12,12,0,0,0,71.89,225a111.67,111.67,0,0,0,27.23,11.27A12,12,0,0,0,109.7,234l17.51-14h1.58l17.51,14a12,12,0,0,0,10.59,2.23A111.75,111.75,0,0,0,184.11,225a12,12,0,0,0,5.91-9.06l2.48-22.28,1.11-1.11L215.9,190a12,12,0,0,0,9.06-5.91,111.67,111.67,0,0,0,11.27-27.23A12,12,0,0,0,234,146.3Zm-24.12-4.89a70.1,70.1,0,0,1,0,8.2,12,12,0,0,0,2.61,8.22l12.84,16.05A86.47,86.47,0,0,1,207,166.86l-20.43,2.27a12,12,0,0,0-7.65,4,69,69,0,0,1-5.8,5.8,12,12,0,0,0-4,7.65L166.86,207a86.47,86.47,0,0,1-10.49,4.35l-16.05-12.85a12,12,0,0,0-7.5-2.62c-.24,0-.48,0-.72,0a70.1,70.1,0,0,1-8.2,0,12.06,12.06,0,0,0-8.22,2.6L99.63,211.33A86.47,86.47,0,0,1,89.14,207l-2.27-20.43a12,12,0,0,0-4-7.65,69,69,0,0,1-5.8-5.8,12,12,0,0,0-7.65-4L49,166.86a86.47,86.47,0,0,1-4.35-10.49l12.84-16.05a12,12,0,0,0,2.61-8.22,70.1,70.1,0,0,1,0-8.2,12,12,0,0,0-2.61-8.22L44.67,99.63A86.47,86.47,0,0,1,49,89.14l20.43-2.27a12,12,0,0,0,7.65-4,69,69,0,0,1,5.8-5.8,12,12,0,0,0,4-7.65L89.14,49a86.47,86.47,0,0,1,10.49-4.35l16.05,12.85a12.06,12.06,0,0,0,8.22,2.6,70.1,70.1,0,0,1,8.2,0,12,12,0,0,0,8.22-2.6l16.05-12.85A86.47,86.47,0,0,1,166.86,49l2.27,20.43a12,12,0,0,0,4,7.65,69,69,0,0,1,5.8,5.8,12,12,0,0,0,7.65,4L207,89.14a86.47,86.47,0,0,1,4.35,10.49l-12.84,16.05A12,12,0,0,0,195.88,123.9Z"/></symbol>
+    <symbol id="p-SignOut" viewBox="0 0 256 256"><path fill="currentColor" d="M124,216a12,12,0,0,1-12,12H48a12,12,0,0,1-12-12V40A12,12,0,0,1,48,28h64a12,12,0,0,1,0,24H60V204h52A12,12,0,0,1,124,216Zm108.49-96.49-40-40a12,12,0,0,0-17,17L195,116H112a12,12,0,0,0,0,24h83l-19.52,19.51a12,12,0,0,0,17,17l40-40A12,12,0,0,0,232.49,119.51Z"/></symbol>
+    <symbol id="p-MagnifyingGlass" viewBox="0 0 256 256"><path fill="currentColor" d="M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z"/></symbol>
+    <symbol id="p-DownloadSimple" viewBox="0 0 256 256"><path fill="currentColor" d="M228,144v64a12,12,0,0,1-12,12H40a12,12,0,0,1-12-12V144a12,12,0,0,1,24,0v52H204V144a12,12,0,0,1,24,0Zm-108.49,8.49a12,12,0,0,0,17,0l40-40a12,12,0,0,0-17-17L140,115V32a12,12,0,0,0-24,0v83L96.49,95.51a12,12,0,0,0-17,17Z"/></symbol>
+    <symbol id="p-Moon" viewBox="0 0 256 256"><path fill="currentColor" d="M236.37,139.4a12,12,0,0,0-12-3A84.07,84.07,0,0,1,119.6,31.59a12,12,0,0,0-15-15A108.86,108.86,0,0,0,49.69,55.07,108,108,0,0,0,136,228a107.09,107.09,0,0,0,64.93-21.69,108.86,108.86,0,0,0,38.44-54.94A12,12,0,0,0,236.37,139.4Zm-49.88,47.74A84,84,0,0,1,68.86,69.51,84.93,84.93,0,0,1,92.27,48.29Q92,52.13,92,56A108.12,108.12,0,0,0,200,164q3.87,0,7.71-.27A84.79,84.79,0,0,1,186.49,187.14Z"/></symbol>
+    <symbol id="p-Timer" viewBox="0 0 256 256"><path fill="currentColor" d="M128,44a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,44Zm0,168a72,72,0,1,1,72-72A72.08,72.08,0,0,1,128,212ZM164.49,99.51a12,12,0,0,1,0,17l-28,28a12,12,0,0,1-17-17l28-28A12,12,0,0,1,164.49,99.51ZM92,16A12,12,0,0,1,104,4h48a12,12,0,0,1,0,24H104A12,12,0,0,1,92,16Z"/></symbol>
+    <symbol id="p-ClockCounterClockwise" viewBox="0 0 256 256"><path fill="currentColor" d="M140,80v41.21l34.17,20.5a12,12,0,1,1-12.34,20.58l-40-24A12,12,0,0,1,116,128V80a12,12,0,0,1,24,0ZM128,28A99.38,99.38,0,0,0,57.24,57.34c-4.69,4.74-9,9.37-13.24,14V64a12,12,0,0,0-24,0v40a12,12,0,0,0,12,12H72a12,12,0,0,0,0-24H57.77C63,86,68.37,80.22,74.26,74.26a76,76,0,1,1,1.58,109,12,12,0,0,0-16.48,17.46A100,100,0,1,0,128,28Z"/></symbol>
+    <symbol id="p-Check" viewBox="0 0 256 256"><path fill="currentColor" d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z"/></symbol>
+    <symbol id="p-X" viewBox="0 0 256 256"><path fill="currentColor" d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"/></symbol>
+    <symbol id="p-Info" viewBox="0 0 256 256"><path fill="currentColor" d="M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z"/></symbol>
+    <symbol id="p-Heartbeat" viewBox="0 0 256 256"><path fill="currentColor" d="M71.76,148H31.7a12,12,0,1,1,0-24H65.33l12.45-18.66a12,12,0,0,1,20,0l22,33,6-9a12,12,0,0,1,10-5.34h24a12,12,0,1,1,0,24h-17.6l-12.46,18.66a12,12,0,0,1-20,0l-22-33-6,9A12,12,0,0,1,71.76,148ZM177.91,36c-20.12,0-38,7.93-50.07,21.56C115.74,43.93,97.89,36,77.76,36A66,66,0,0,0,12.07,94.68,12,12,0,0,0,36,97.32,42,42,0,0,1,77.76,60c17.83,0,32.75,9.4,38.95,24.54a12,12,0,0,0,22.25,0C145.16,69.4,160.08,60,177.91,60A42.08,42.08,0,0,1,220,102c0,29.42-25.86,57.77-47.56,76.36a329,329,0,0,1-44.58,31.81c-10.87-6.45-35.37-22-56.51-42.73a12,12,0,1,0-16.84,17.12c30.39,29.81,66.15,49.2,67.66,50a12.06,12.06,0,0,0,11.39,0C138,232.14,244,174.34,244,102A66.12,66.12,0,0,0,177.91,36Z"/></symbol>
+    <symbol id="p-ArrowRight" viewBox="0 0 256 256"><path fill="currentColor" d="M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z"/></symbol>
+    <symbol id="p-Plus" viewBox="0 0 256 256"><path fill="currentColor" d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z"/></symbol>
+    <symbol id="p-CaretRight" viewBox="0 0 256 256"><path fill="currentColor" d="M184.49,136.49l-80,80a12,12,0,0,1-17-17L159,128,87.51,56.49a12,12,0,1,1,17-17l80,80A12,12,0,0,1,184.49,136.49Z"/></symbol>
+    <symbol id="p-PersonArmsSpread" viewBox="0 0 256 256"><path fill="currentColor" d="M160,40a32,32,0,1,0-32,32A32,32,0,0,0,160,40ZM128,56a16,16,0,1,1,16-16A16,16,0,0,1,128,56ZM231.5,87.71A19.62,19.62,0,0,0,212,72H44a20,20,0,0,0-8.38,38.16l.13,0,50.75,22.35-21,79.72A20,20,0,0,0,102,228.8l26-44.87,26,44.87a20,20,0,0,0,36.4-16.52l-21-79.72,50.75-22.35.13,0A19.64,19.64,0,0,0,231.5,87.71Zm-17.8,7.9-56.93,25.06a8,8,0,0,0-4.51,9.36L175.13,217a7,7,0,0,0,.49,1.35,4,4,0,0,1-5,5.45,4,4,0,0,1-2.25-2.07,6.310,6.310,0,0,0-.34-.63L134.92,164a8,8,0,0,0-13.84,0L88,221.05a6.31,6.31,0,0,0-.34.63,4,4,0,0,1-2.25,2.07,4,4,0,0,1-5-5.45,7,7,0,0,0,.49-1.35L103.74,130a8,8,0,0,0-4.51-9.36L42.3,95.61A4,4,0,0,1,44,88H212a4,4,0,0,1,1.73,7.61Z"/></symbol>
+    <symbol id="p-Lightning" viewBox="0 0 256 256"><path fill="currentColor" d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.690,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"/></symbol>
+    <symbol id="p-NotePencil" viewBox="0 0 256 256"><path fill="currentColor" d="M229.66,58.34l-32-32a8,8,0,0,0-11.32,0l-96,96A8,8,0,0,0,88,128v32a8,8,0,0,0,8,8h32a8,8,0,0,0,5.66-2.34l96-96A8,8,0,0,0,229.66,58.34ZM124.69,152H104V131.31l64-64L188.69,88ZM200,76.69,179.31,56,192,43.31,212.69,64ZM224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Z"/></symbol>
+    <symbol id="p-VideoCamera" viewBox="0 0 256 256"><path fill="currentColor" d="M251.77,73a8,8,0,0,0-8.21.39L208,97.05V72a16,16,0,0,0-16-16H32A16,16,0,0,0,16,72V184a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V159l35.56,23.71A8,8,0,0,0,248,184a8,8,0,0,0,8-8V80A8,8,0,0,0,251.77,73ZM192,184H32V72H192V184Zm48-22.95-32-21.33V116.28L240,95Z"/></symbol>
+    <symbol id="p-PencilSimple" viewBox="0 0 256 256"><path fill="currentColor" d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></symbol>
+    <symbol id="p-Trash" viewBox="0 0 256 256"><path fill="currentColor" d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></symbol>
+    <symbol id="pd-WarningCircle" viewBox="0 0 256 256"><path d="M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"/></symbol>
+    <symbol id="pd-Copy" viewBox="0 0 256 256"><path d="M216,40V168H168V88H88V40Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></symbol>
+    <symbol id="pd-Barbell" viewBox="0 0 256 256"><path d="M96,64V192a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V64a8,8,0,0,1,8-8H88A8,8,0,0,1,96,64Zm96-8H168a8,8,0,0,0-8,8V192a8,8,0,0,0,8,8h24a8,8,0,0,0,8-8V64A8,8,0,0,0,192,56Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M248,120h-8V88a16,16,0,0,0-16-16H208V64a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16v56H104V64A16,16,0,0,0,88,48H64A16,16,0,0,0,48,64v8H32A16,16,0,0,0,16,88v32H8a8,8,0,0,0,0,16h8v32a16,16,0,0,0,16,16H48v8a16,16,0,0,0,16,16H88a16,16,0,0,0,16-16V136h48v56a16,16,0,0,0,16,16h24a16,16,0,0,0,16-16v-8h16a16,16,0,0,0,16-16V136h8a8,8,0,0,0,0-16ZM32,168V88H48v80Zm56,24H64V64H88V192Zm104,0H168V64h24V175.83c0,.06,0,.11,0,.17s0,.12,0,.17V192Zm32-24H208V88h16Z"/></symbol>
+    <symbol id="pd-ChartLineUp" viewBox="0 0 256 256"><path d="M224,64V208H32V48H208A16,16,0,0,1,224,64Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31l-56,56V200H224A8,8,0,0,1,232,208Z"/></symbol>
+    <symbol id="pd-FileText" viewBox="0 0 256 256"><path d="M208,88H152V32Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/></symbol>
+    <symbol id="pd-Lock" viewBox="0 0 256 256"><path d="M216,96V208a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V96a8,8,0,0,1,8-8H208A8,8,0,0,1,216,96Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Zm-68-56a12,12,0,1,1-12-12A12,12,0,0,1,140,152Z"/></symbol>
+    <symbol id="pd-ClockCounterClockwise" viewBox="0 0 256 256"><path d="M216,128a88,88,0,1,1-88-88A88,88,0,0,1,216,128Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82V64a8,8,0,0,0-16,0v40a8,8,0,0,0,8,8H72a8,8,0,0,0,0-16H49c7.15-8.42,14.27-16.35,22.39-24.57a80,80,0,1,1,1.66,114.75,8,8,0,1,0-11,11.64A96,96,0,1,0,128,32Z"/></symbol>
+    <symbol id="pd-ShieldCheck" viewBox="0 0 256 256"><path d="M216,56v56c0,96-88,120-88,120S40,208,40,112V56a8,8,0,0,1,8-8H208A8,8,0,0,1,216,56Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z"/></symbol>
+    <symbol id="pd-FolderOpen" viewBox="0 0 256 256"><path d="M208,88v24H69.77a8,8,0,0,0-7.59,5.47L32,208V64a8,8,0,0,1,8-8H93.33a8,8,0,0,1,4.8,1.6L128,80h72A8,8,0,0,1,208,88Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M245,110.64A16,16,0,0,0,232,104H216V88a16,16,0,0,0-16-16H130.67L102.94,51.2a16.14,16.14,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V208a8,8,0,0,0,8,8H211.1a8,8,0,0,0,7.59-5.47l28.49-85.47A16.05,16.05,0,0,0,245,110.64ZM93.34,64,123.2,86.4A8,8,0,0,0,128,88h72v16H69.77a16,16,0,0,0-15.18,10.94L40,158.7V64Zm112,136H43.1l26.67-80H232Z"/></symbol>
+    <symbol id="pd-Timer" viewBox="0 0 256 256"><path d="M216,136a88,88,0,1,1-88-88A88,88,0,0,1,216,136Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z"/></symbol>
+    <symbol id="pd-DeviceMobile" viewBox="0 0 256 256"><path d="M192,56V200H64V56Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M176,16H80A24,24,0,0,0,56,40V216a24,24,0,0,0,24,24h96a24,24,0,0,0,24-24V40A24,24,0,0,0,176,16ZM72,64H184V192H72Zm8-32h96a8,8,0,0,1,8,8v8H72V40A8,8,0,0,1,80,32Zm96,192H80a8,8,0,0,1-8-8v-8H184v8A8,8,0,0,1,176,224Z"/></symbol>
+    <symbol id="pd-WifiSlash" viewBox="0 0 256 256"><path d="M238.2,87.69l-104,125.43a8,8,0,0,1-12.3,0L17.8,87.69a7.79,7.79,0,0,1,1.31-11.21,180.75,180.75,0,0,1,217.78,0A7.79,7.79,0,0,1,238.2,87.69Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M53.92,34.62A8,8,0,1,0,42.08,45.38l4.55,5A187.93,187.93,0,0,0,14.28,70.1,15.93,15.93,0,0,0,8.11,80.91,15.65,15.65,0,0,0,11.65,92.8l104,125.43A15.93,15.93,0,0,0,128,224h0a15.93,15.93,0,0,0,12.31-5.77l28.1-33.88,33.67,37a8,8,0,1,0,11.84-10.76ZM128,208,24.09,82.74A171.5,171.5,0,0,1,57.91,62.79l99.63,109.6ZM244.35,92.8l-49.42,59.58a8,8,0,0,1-12.32-10.21l49.3-59.43A170.76,170.76,0,0,0,128,48a175.15,175.15,0,0,0-32.39,3,8,8,0,1,1-3-15.72A190.62,190.62,0,0,1,128,32,186.67,186.67,0,0,1,241.72,70.1a15.93,15.93,0,0,1,6.17,10.81A15.65,15.65,0,0,1,244.35,92.8Z"/></symbol>
+    <symbol id="pd-Medal" viewBox="0 0 256 256"><path d="M176,96a48,48,0,1,1-48-48A48,48,0,0,1,176,96Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M216,96A88,88,0,1,0,72,163.83V240a8,8,0,0,0,11.58,7.16L128,225l44.43,22.21A8.07,8.07,0,0,0,176,248a8,8,0,0,0,8-8V163.83A87.85,87.85,0,0,0,216,96ZM56,96a72,72,0,1,1,72,72A72.08,72.08,0,0,1,56,96ZM168,227.06l-36.43-18.21a8,8,0,0,0-7.16,0L88,227.06V174.37a87.89,87.89,0,0,0,80,0ZM128,152A56,56,0,1,0,72,96,56.06,56.06,0,0,0,128,152Zm0-96A40,40,0,1,1,88,96,40,40,0,0,1,128,56Z"/></symbol>
+    <symbol id="pd-Archive" viewBox="0 0 256 256"><path d="M216,96v96a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V96Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M224,48H32A16,16,0,0,0,16,64V88a16,16,0,0,0,16,16v88a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V104a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM208,192H48V104H208ZM224,88H32V64H224V88ZM96,136a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,136Z"/></symbol>
+  </svg>
+
+  <header class="topo escuro">
+    <div class="container topo-linha">
+      <a class="logo" href="#inicio" aria-label="No Game, voltar ao início">
+        <svg width="24" height="24" aria-hidden="true"><use href="#logo-marca" /></svg>
+        No Game
+      </a>
+      <nav class="nav" aria-label="Seções">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#treinador">Para o treinador</a>
+        <a href="#aluno">Para o aluno</a>
+        <a href="#planos">Planos</a>
+        <a href="#perguntas">Perguntas</a>
+      </nav>
+      <div class="topo-acoes">
+        <a class="link-entrar" href="https://novo-treino.vercel.app/login">Entrar</a>
+        <a class="btn btn-primary btn-sm" href="https://novo-treino.vercel.app/register">Criar conta</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="inicio">
+
+    <!-- ── Hero ─────────────────────────────────────────────────────── -->
+    <section class="hero escuro" aria-labelledby="hero-titulo">
+      <div class="container hero-grade">
+        <div class="hero-texto">
+          <span class="rotulo entra" style="--i:0"><span class="marca" aria-hidden="true"></span>Para personal trainers e treinadores de musculação</span>
+          <h1 id="hero-titulo" class="titulo-hero" aria-label="Sua ficha sai do PDF e vira treino registrado, série por série.">
+            <span aria-hidden="true" class="palavra" style="--i:0">Sua</span>
+            <span aria-hidden="true" class="palavra" style="--i:1">ficha</span>
+            <span aria-hidden="true" class="palavra" style="--i:2">sai</span>
+            <span aria-hidden="true" class="palavra" style="--i:3">do</span>
+            <span aria-hidden="true" class="palavra" style="--i:4">PDF</span>
+            <span aria-hidden="true" class="palavra" style="--i:5">e</span>
+            <span aria-hidden="true" class="palavra" style="--i:6">vira</span>
+            <span aria-hidden="true" class="palavra" style="--i:7">treino</span>
+            <span aria-hidden="true" class="palavra" style="--i:8">registrado,</span>
+            <span aria-hidden="true" class="palavra" style="--i:9">série</span>
+            <span aria-hidden="true" class="palavra" style="--i:10">por</span>
+            <span aria-hidden="true" class="palavra" style="--i:11">série.</span>
+          </h1>
+          <p class="lede entra" style="--i:1">
+            Você monta a periodização e manda um link. O aluno registra carga e repetições no
+            celular. Você vê a evolução sem perguntar no WhatsApp.
+          </p>
+          <div class="hero-botoes entra" style="--i:2">
+            <a class="btn btn-primary" href="https://novo-treino.vercel.app/register">
+              Criar conta de treinador
+              <svg class="seta" width="16" height="16" aria-hidden="true"><use href="#p-ArrowRight" /></svg>
+            </a>
+            <a class="btn btn-on-dark" href="#como-funciona">Ver como funciona</a>
+          </div>
+          <!-- PREÇO PROVISÓRIO: troque junto com a seção de planos -->
+          <p class="hero-preco entra" style="--i:2"><b>R$ 49/mês</b> · seus alunos não pagam nada</p>
+          <ul class="destaques entra" style="--i:3">
+            <li>O aluno usa de graça. Só você assina.</li>
+            <li>Copie uma periodização de um aluno para outro e ajuste só o que muda.</li>
+            <li>Acabou a ficha em PDF que ninguém sabe se foi feita.</li>
+          </ul>
+        </div>
+
+        <div class="palco">
+          <figure class="celular">
+            <figcaption class="sr-only">
+              Tela do aluno no No Game: ficha Treino A, exercício Supino reto articulado com meta de
+              2 séries de 5 a 8 repetições, e uma faixa no topo com 0 de 6 exercícios concluídos. A primeira série é marcada como feita com 92,5 kg e
+              8 repetições, e o cronômetro de descanso começa.
+            </figcaption>
+            <div class="celular-tela" aria-hidden="true">
+              <span class="ilha"></span><span class="barra-home"></span>
+              <div class="app-status">
+                <span class="num">9:41</span>
+                <span class="app-status-icones">
+                  <i style="width:3px;height:5px"></i><i style="width:3px;height:7px"></i><i style="width:3px;height:9px"></i>
+                  <i style="width:20px;height:10px;border-radius:3px;margin-left:4px"></i>
+                </span>
+              </div>
+              <div class="app-cab">
+                <div class="app-trilha">Protocolo // Hipertrofia</div>
+                <div class="app-titulo">Hipertrofia</div>
+                <div class="app-meta">Aluno: <b>João Vitor</b> • Treinador: Lucas Campos</div>
+                <span class="selo-verde">PERIODIZAÇÃO ATUAL</span>
+              </div>
+              <div class="app-abas">
+                <span class="ativa">A</span><span>B</span><span>C</span>
+              </div>
+              <div class="app-progresso">
+                <span class="app-progresso-barra"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+                <span class="app-progresso-texto"><b>0</b> de 6 exercícios</span>
+              </div>
+
+              <div class="app-card">
+                <div class="app-card-topo">
+                  <div>
+                    <div class="app-ex-num">EXERCÍCIO 01</div>
+                    <div class="app-ex-nome">Supino reto articulado</div>
+                  </div>
+                  <span class="app-desc">
+                    <svg width="13" height="13"><use href="#p-Timer" /></svg>
+                    2-3 min
+                  </span>
+                </div>
+                <div class="app-chips">
+                  <span class="chip-cinza">Peito</span>
+                  <span class="chip-tecnica">Tensional básico</span>
+                  <span class="app-instrucao">Buscar a falha</span>
+                </div>
+                <div class="app-alvo">
+                  <span>Meta prescrita: <b>2 séries × 5-8</b></span>
+                  <span class="contagem num"><span class="cont-antes">0 de 2 concluídas</span><span class="cont-depois">1 de 2 concluídas</span></span>
+                </div>
+                <div class="app-ultimo"><svg width="12" height="12"><use href="#p-ClockCounterClockwise" /></svg><span>Último treino: <b>21/10/26</b> (há 2 dias)</span></div>
+                <div class="app-series-cab"><span>SÉRIE</span><span>ANTERIOR</span><span>CARGA</span><span>REPS</span><span></span></div>
+                <div class="app-serie serie-feita">
+                  <span class="n">1</span>
+                  <span class="ant">90k × 7</span>
+                  <span class="campo">92,5<small>kg</small></span>
+                  <span class="campo">8<small>reps</small></span>
+                  <span class="check check-feito"><svg class="check-marca" style="color:#fff"><use href="#p-Check" /></svg></span>
+                </div>
+                <div class="app-serie">
+                  <span class="n">2</span>
+                  <span class="ant">90k × 6</span>
+                  <span class="campo vazio">92,5<small>kg</small></span>
+                  <span class="campo vazio">8<small>reps</small></span>
+                  <span class="check"></span>
+                </div>
+              </div>
+
+
+              <div class="descanso">
+                <div class="descanso-lado">
+                  <svg><use href="#p-Timer" /></svg>
+                  <div>
+                    <span class="descanso-rotulo">Tempo de Descanso</span>
+                    <span class="descanso-sub">Respire e recupere as forças</span>
+                  </div>
+                </div>
+                <div class="descanso-lado">
+                  <span class="descanso-tempo" data-descanso>2:00</span>
+                  <span class="descanso-pular">Pular</span>
+                </div>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Como funciona ────────────────────────────────────────────── -->
+    <section id="como-funciona" class="secao" aria-labelledby="como-titulo">
+      <div class="container">
+        <div class="secao-cab">
+          <span class="rotulo"><span class="marca" aria-hidden="true"></span>Como funciona</span>
+          <h2 id="como-titulo" class="titulo-secao">A ficha vai para o celular do aluno. A&nbsp;carga volta para você.</h2>
+        </div>
+
+        <ol class="passos" role="list" style="list-style:none">
+          <li class="passo">
+            <div class="passo-texto">
+              <span class="passo-num" aria-hidden="true">01</span>
+              <h3>Monte a ficha do jeito que você prescreve</h3>
+              <p>
+                Escolha o exercício na sua biblioteca e preencha séries, faixa de repetições, descanso,
+                técnica e instrução de execução. Cada ficha tem o nome que você quiser e fica dentro
+                da periodização do aluno.
+              </p>
+              <ul class="passo-notas">
+                <li>Descanso fixo ou em faixa, como "1-3 min".</li>
+                <li>A busca ignora acento e a ordem das palavras: "inclinado supino" já acha os quatro supinos inclinados.</li>
+                <li>O botão Adicionar mantém a janela aberta, para lançar vários exercícios em sequência.</li>
+                <li>Arraste para reordenar os exercícios. As fichas você reordena em uma lista, arrastando ou pelas setas, no computador e no celular.</li>
+              </ul>
+            </div>
+            <figure class="janela tela-entra">
+              <figcaption class="sr-only">Janela de prescrição do treinador: a busca "inclinado supino" encontra os quatro supinos inclinados do catálogo, com o grupo ao lado. Embaixo ficam séries, repetições e descanso, e o botão Concluir mostra que dois exercícios já foram adicionados sem fechar a janela.</figcaption>
+              <div aria-hidden="true">
+                <div class="janela-topo">
+                  <span class="logo"><svg width="20" height="20"><use href="#logo-marca" /></svg>No Game</span>
+                  <span class="avatar">LC</span>
+                </div>
+                <div class="janela-corpo pres">
+                  <div class="ui-modal-cab">
+                    <div>
+                      <span class="ui-sobre"><i></i>PRESCRIÇÃO // NOVO EXERCÍCIO</span>
+                      <h5>Adicionar Exercício (Treino A)</h5>
+                    </div>
+                    <span class="ui-fechar"><svg><use href="#p-X" /></svg></span>
+                  </div>
+                  <div class="pres-busca">
+                    <div class="ui-campo-l"><span class="ui-rot">Buscar exercício</span><span class="ui-in foco">inclinado supino<i class="ui-cursor"></i></span></div>
+                    <ul class="pres-lista">
+                      <li class="ativo"><span>Supino inclinado articulado</span><small>Peito</small></li>
+                      <li><span>Supino inclinado com halteres</span><small>Peito</small></li>
+                      <li><span>Supino inclinado na barra</span><small>Peito</small></li>
+                      <li><span>Supino inclinado no smith</span><small>Peito</small></li>
+                    </ul>
+                  </div>
+                  <div class="ui-modal-grade">
+                    <div class="ui-campo-l"><span class="ui-rot">Grupo Muscular *</span><span class="ui-in sel vazio">Selecione...<svg><use href="#p-CaretRight" /></svg></span></div>
+                    <div class="ui-campo-l"><span class="ui-rot">Exercício *</span><span class="ui-in sel vazio">Escolha o grupo primeiro<svg><use href="#p-CaretRight" /></svg></span></div>
+                  </div>
+                  <div class="ui-modal-grade tres">
+                    <div class="ui-campo-l"><span class="ui-rot">Séries *</span><span class="ui-in">3</span></div>
+                    <div class="ui-campo-l"><span class="ui-rot">Repetições *</span><span class="ui-in vazio">Ex: 8-12 ou 10</span></div>
+                    <div class="ui-campo-l"><span class="ui-rot">Descanso</span><span class="ui-in vazio">Ex: 60, 60-90 ou 1-3 min</span></div>
+                  </div>
+                  <div class="ui-modal-rodape">
+                    <span class="ui-mini-btn grande">Concluir · 2 adicionados</span>
+                    <span class="ui-mini-btn grande primario">+ Adicionar</span>
+                  </div>
+                </div>
+              </div>
+            </figure>
+          </li>
+
+          <li class="passo">
+            <div class="passo-texto">
+              <span class="passo-num" aria-hidden="true">02</span>
+              <h3>Mande o link pelo canal que você já usa</h3>
+              <p>
+                Cada periodização tem o seu link. No primeiro acesso, o aluno confirma o telefone e
+                cria um PIN de quatro dígitos. Depois entra só com telefone e PIN, inclusive pelo app
+                instalado na tela inicial.
+              </p>
+              <ul class="passo-notas">
+                <li>O aluno não cria conta com e-mail e senha.</li>
+                <li>Esqueceu o PIN? Ele cria outro pelo link que chega no e-mail.</li>
+                <li>Você pode revogar o acesso de um aluno quando quiser.</li>
+              </ul>
+            </div>
+            <figure class="entrada tela-entra">
+              <figcaption class="sr-only">Tela de primeiro acesso do aluno: o nome do treinador, o campo para confirmar o telefone e as casas para criar e repetir o PIN de 4 dígitos.</figcaption>
+              <div class="entrada-marca" aria-hidden="true">
+                <span class="logo"><svg width="20" height="20"><use href="#logo-marca" /></svg>No Game</span>
+                <div>
+                  <h4>Treino prescrito, carga registrada.</h4>
+                  <p>O treinador monta a ficha. O aluno registra cada série e acompanha a evolução.</p>
+                </div>
+              </div>
+              <div class="entrada-form" aria-hidden="true">
+                <div class="acesso-cab">
+                  <span class="acesso-treinador"><span class="acesso-inicial">L</span><span><small>Seu treinador</small><b>Lucas Campos</b></span></span>
+                  <div class="acesso-titulo">Olá, João</div>
+                  <p class="acesso-sub">Confirme seu telefone e crie um PIN de 4 dígitos. Você vai usar os dois para abrir seu treino.</p>
+                </div>
+                <div>
+                  <div class="campo-rotulo">Confirme seu telefone</div>
+                  <div class="campo-falso">(11) 98765-4321</div>
+                  <div class="campo-dica">O mesmo número em que você recebeu este link.</div>
+                </div>
+                <div>
+                  <div class="campo-rotulo">Crie um PIN de 4 dígitos</div>
+                  <div class="pin"><span>•</span><span>•</span><span>•</span><span>•</span></div>
+                </div>
+                <div>
+                  <div class="campo-rotulo">Repita o PIN</div>
+                  <div class="pin"><span>•</span><span>•</span><span>•</span><span class="foco"></span></div>
+                </div>
+                <span class="mini-btn primario">Criar PIN e abrir treino<svg width="14" height="14"><use href="#p-ArrowRight" /></svg></span>
+              </div>
+            </figure>
+          </li>
+
+          <li class="passo">
+            <div class="passo-texto">
+              <span class="passo-num" aria-hidden="true">03</span>
+              <h3>Acompanhe a carga de cada exercício</h3>
+              <p>
+                Toda série marcada como feita entra no histórico, mesmo que o aluno esqueça de
+                encerrar o treino. Em cada exercício você vê a melhor série das últimas 12 sessões,
+                e o histórico acompanha o exercício quando você troca de periodização.
+              </p>
+              <p>
+                Quando o aluno passa da faixa de repetições que você prescreveu, o exercício ganha
+                <span class="selo acima">▲ Subir carga</span>. Quando fica abaixo, aparece
+                <span class="selo abaixo">▼ Carga alta</span>. Semanas na mesma carga são normais,
+                então não há alerta de estagnação.
+              </p>
+            </div>
+            <figure class="prog tela-entra">
+              <figcaption class="sr-only">
+                Placar do Supino reto articulado com faixa de 5 a 8 repetições. Últimas seis
+                sessões: 85 kg por 8, 87,5 por 7, 87,5 por 8, 90 por 4 (abaixo da faixa), 90 por 8
+                e 92,5 por 9 (acima da faixa, sinal de subir carga).
+              </figcaption>
+              <div aria-hidden="true" style="display:grid;gap:14px">
+                <div class="prog-topo">
+                  <svg width="20" height="20"><use href="#pd-Barbell" /></svg>
+                  <span class="prog-nome">Supino reto articulado</span>
+                  <span class="prog-faixa">Faixa 5-8</span>
+                </div>
+                <div class="prog-valor">
+                  <span class="prog-kg">92,5<small>kg</small></span>
+                  <span class="prog-meta">
+                    <span class="selo acima">▲ Subir carga</span>
+                    <span>9 reps · 21/10</span>
+                  </span>
+                </div>
+                <ol class="placar">
+                  <li><span class="placar-kg">85</span><span class="placar-reps">× 8</span><span class="placar-data">16/09</span></li>
+                  <li><span class="placar-kg">87,5</span><span class="placar-reps">× 7</span><span class="placar-data">23/09</span></li>
+                  <li><span class="placar-kg">87,5</span><span class="placar-reps">× 8</span><span class="placar-data">30/09</span></li>
+                  <li class="abaixo"><span class="placar-kg">90</span><span class="placar-reps">× 4 ▼</span><span class="placar-data">07/10</span></li>
+                  <li><span class="placar-kg">90</span><span class="placar-reps">× 8</span><span class="placar-data">14/10</span></li>
+                  <li class="acima ultima"><span class="placar-kg">92,5</span><span class="placar-reps">× 9 ▲</span><span class="placar-data">21/10</span></li>
+                </ol>
+              </div>
+            </figure>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ── Aeróbico ──────────────────────────────────────────────────── -->
+    <section id="aerobico" class="secao" aria-labelledby="aerobico-titulo">
+      <div class="container cardio-grade">
+        <div class="cardio-texto">
+          <span class="rotulo"><span class="marca" aria-hidden="true"></span>Aeróbico</span>
+          <h2 id="aerobico-titulo" class="titulo-secao">O aeróbico entra na mesma ficha que a musculação</h2>
+          <p class="lede">
+            Escolha o modelo e os minutos em cada ficha. O aluno vê o aeróbico no topo do treino,
+            abre a explicação de como fazer e marca os minutos no fim, junto com as séries.
+          </p>
+          <ul class="passo-notas">
+            <li>Quatro modelos prontos: Contínuo, HIIT 1:1, HIIT 4x4 e SIT.</li>
+            <li>Os intervalados já trazem intensidade alvo e duração usual. Se você prescrever um tempo fora da faixa, o app avisa.</li>
+            <li>O aeróbico entra no PDF da ficha. Os minutos que o aluno registra vão para o progresso, mesmo marcados sem internet.</li>
+          </ul>
+        </div>
+
+        <figure class="cardio-tela tela-entra">
+          <figcaption class="sr-only">
+            Tela do aluno com aeróbico pós-treino de 25 minutos no modelo HIIT 4x4, o campo para
+            marcar os minutos feitos e a explicação do modelo: 4 séries de 4 minutos em esforço
+            forte com 3 minutos de pausa, a 90% da frequência cardíaca máxima.
+          </figcaption>
+          <div aria-hidden="true">
+            <div class="cardio-cab">
+              <svg width="15" height="15"><use href="#p-Heartbeat" /></svg>
+              <span>Aeróbico pós-treino: <b>25 min</b></span>
+              <span class="cardio-tipo">HIIT 4x4 <svg width="12" height="12"><use href="#p-Info" /></svg></span>
+            </div>
+            <div class="cardio-registro">
+              <div class="cardio-registro-rotulo">AERÓBICO</div>
+              <div class="cardio-registro-nome">Cardio pós-treino <span class="cardio-tipo">HIIT 4x4</span></div>
+              <div class="cardio-meta">Meta prescrita: <b>25 min</b></div>
+              <div class="cardio-feito">
+                <span>Quanto você fez</span>
+                <span class="cardio-feito-campos">
+                  <span class="cardio-minutos">25<small>min</small></span>
+                  <span class="check"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="cardio-explicacao" aria-hidden="true">
+            <div class="cardio-explicacao-topo">
+              <h4>HIIT 4x4</h4>
+              <svg width="16" height="16"><use href="#p-X" /></svg>
+            </div>
+            <p>4 séries de 4 minutos em esforço forte, com 3 minutos de pausa entre elas.</p>
+            <dl>
+              <div><dt>Intensidade alvo</dt><dd>90% da frequência cardíaca máxima.</dd></div>
+              <div><dt>Duração usual</dt><dd>25 a 28 minutos.</dd></div>
+            </dl>
+            <span class="cardio-entendido">Entendido</span>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ── Para o treinador ─────────────────────────────────────────── -->
+    <section id="treinador" class="secao branca" aria-labelledby="treinador-titulo">
+      <div class="container">
+        <div class="secao-cab">
+          <span class="rotulo"><span class="marca" aria-hidden="true"></span>Para o treinador</span>
+          <h2 id="treinador-titulo" class="titulo-secao">Prescreva de onde estiver</h2>
+          <p class="lede">O app é o mesmo no computador e no celular. Monte a periodização inteira onde for mais cômodo e troque um exercício ou ajuste as séries quando precisar. Clique nas abas para ver a ficha, a biblioteca e o volume semanal.</p>
+        </div>
+
+        <!-- Os botões só aparecem com script: sem ele o notebook mostra a lista de alunos -->
+        <div class="disp-abas" role="group" aria-label="Tela do notebook" data-disp-abas hidden>
+          <button type="button" aria-pressed="true" data-tela="alunos">Alunos</button>
+          <button type="button" aria-pressed="false" data-tela="ficha">Ficha</button>
+          <button type="button" aria-pressed="false" data-tela="biblioteca">Biblioteca</button>
+          <button type="button" aria-pressed="false" data-tela="volume">Volume</button>
+        </div>
+
+        <figure class="disp tela-entra">
+          <figcaption class="sr-only">
+            O No Game do treinador em dois aparelhos.
+            <span data-legenda="alunos">No notebook, a lista de alunos com busca na barra, menu lateral fixo e a situação do acesso de cada aluno.</span>
+            <span data-legenda="ficha" hidden>No notebook, a montagem do Treino A do João Vitor: cinco exercícios com séries, faixa de repetições, descanso, técnica e instrução. O botão Exercício abre a janela de prescrição já preenchida com a rosca bayesian, 3 séries de 8 a 12.</span>
+            <span data-legenda="biblioteca" hidden>No notebook, a biblioteca com as abas Exercícios, Grupos Musculares, Técnicas de Treino e Instruções. A busca "articulado supino" encontra os três supinos articulados, em qualquer ordem de palavras.</span>
+            <span data-legenda="volume" hidden>No notebook, o volume semanal do João Vitor: 59 séries em 10 grupos musculares na semana, com o mapa do corpo mais vermelho onde há mais séries. Costas lidera com 10 séries.</span>
+            No celular, a ficha Treino A do aluno João Vitor, com os exercícios prescritos e a barra de abas embaixo.
+          </figcaption>
+
+          <div class="laptop" aria-hidden="true">
+            <div class="laptop-tampa">
+              <div class="laptop-tela">
+                <div class="ui ui-desk">
+                  <div class="ui-menubar"><b>No Game</b><span>Arquivo</span><span>Editar</span><span>Visualizar</span><span>Janela</span><span>Ajuda</span><span class="dir"><span>sáb. 24 out</span><span>9:41</span></span></div>
+                  <div class="ui-notch"></div>
+                  <div class="ui-janela">
+                    <div class="ui-topo">
+                      <span class="logo"><svg width="22" height="22"><use href="#logo-marca" /></svg>No Game</span>
+                      <span class="ui-busca"><svg><use href="#p-MagnifyingGlass" /></svg> Buscar aluno…<kbd>/</kbd></span>
+                      <span class="ui-topo-dir"><span class="ui-ibtn"><svg><use href="#p-DownloadSimple" /></svg></span><span class="ui-ibtn"><svg><use href="#p-Moon" /></svg></span></span>
+                    </div>
+                    <div class="ui-trilho">
+                      <span class="ui-item"><svg><use href="#p-House" /></svg> Início</span>
+                      <span class="ui-item ativo" data-ir="alunos"><svg><use href="#p-Users" /></svg> Alunos</span>
+                      <span class="ui-item" data-ir="biblioteca"><svg><use href="#p-Barbell" /></svg> Biblioteca</span>
+                      <span class="ui-item"><svg><use href="#p-Gear" /></svg> Config.</span>
+                      <span class="ui-item fim"><svg><use href="#p-SignOut" /></svg> Sair</span>
+                    </div>
+                    <div class="ui-conteudo" data-painel="alunos">
+                      <div class="ui-cab">
+                        <div><h4>Alunos</h4><p>7 alunos cadastrados</p></div>
+                        <span class="ui-btn">+ Novo aluno</span>
+                      </div>
+                      <div class="ui-colunas"><span></span><span>Aluno</span><span>Periodização atual</span><span>Acesso</span></div>
+                      <div class="ui-aluno" data-ir="ficha"><span class="ui-iniciais">JV</span><div><div class="ui-nome">João Vitor</div><div class="ui-contato">joao.vitor@exemplo.com · (11) 98765-4321</div></div><div class="ui-plano"><b>Hipertrofia</b><span class="">até 18/12/2026</span></div><div><span class="ui-selo ok">PIN criado</span></div></div>
+                      <div class="ui-aluno"><span class="ui-iniciais">MC</span><div><div class="ui-nome">Marina Couto</div><div class="ui-contato">marina.couto@exemplo.com · (11) 97654-3210</div></div><div class="ui-plano"><b>Definição</b><span class="">até 02/12/2026</span></div><div><span class="ui-selo ok">PIN criado</span></div></div>
+                      <div class="ui-aluno"><span class="ui-iniciais">BA</span><div><div class="ui-nome">Bruno Alves</div><div class="ui-contato">bruno.alves@exemplo.com · (21) 99876-5432</div></div><div class="ui-plano"><b>Força</b><span class="vencida">encerrada em 10/10/2026</span></div><div><span class="ui-selo ok">PIN criado</span></div></div>
+                      <div class="ui-aluno"><span class="ui-iniciais">CS</span><div><div class="ui-nome">Camila Souza</div><div class="ui-contato">camila.souza@exemplo.com · (31) 98877-6655</div></div><div class="ui-plano"><span class="vazia">Sem periodização atual</span></div><div><span class="ui-selo espera">Aguardando 1º acesso</span></div></div>
+                      <div class="ui-aluno"><span class="ui-iniciais">DR</span><div><div class="ui-nome">Diego Ramos</div><div class="ui-contato">diego.ramos@exemplo.com · (11) 96543-2109</div></div><div class="ui-plano"><b>Hipertrofia</b><span class="">até 20/01/2027</span></div><div><span class="ui-selo espera">Aguardando 1º acesso</span></div></div>
+                      <div class="ui-aluno"><span class="ui-iniciais">FL</span><div><div class="ui-nome">Fernanda Lima</div><div class="ui-contato">fernanda.lima@exemplo.com · (41) 99123-4567</div></div><div class="ui-plano"><b>Hipertrofia</b><span class="">até 12/01/2027</span></div><div><span class="ui-selo ok">PIN criado</span></div></div>
+                      <div class="ui-aluno"><span class="ui-iniciais">GR</span><div><div class="ui-nome">Gustavo Reis</div><div class="ui-contato">gustavo.reis@exemplo.com · (11) 95432-1098</div></div><div class="ui-plano"><b>Força</b><span class="">até 05/02/2027</span></div><div><span class="ui-selo espera">Aguardando 1º acesso</span></div></div>
+                    </div>
+                    <div class="ui-conteudo ui-ficha" data-painel="ficha" hidden>
+                      <div class="migalha">Alunos / João Vitor / Periodizações / <b>Hipertrofia</b></div>
+                      <div class="ui-ficha-cab">
+                        <span class="ui-voltar"><svg><use href="#p-ArrowRight" /></svg></span>
+                        <div><h4>João Vitor</h4><p>Hipertrofia</p></div>
+                        <span class="ui-ficha-botoes"><span class="mini-btn">Compartilhar</span><span class="mini-btn">Gerar PDF</span></span>
+                      </div>
+                      <div class="ui-visao"><span class="ativa">Fichas</span><span>Progresso</span></div>
+                      <div class="ficha-abas"><span class="ativa">Treino A</span><span>Treino B</span><span>Treino C</span><span class="nova">+</span><span class="ordem">⇅ Ordenar</span></div>
+                      <div class="ui-ficha-barra">
+                        <h5>Treino A</h5>
+                        <span class="ui-ficha-acoes">
+                          <span class="ui-mini-btn primario chama" data-modal-abrir>+ Exercício</span>
+                          <span class="ui-mini-btn"><svg><use href="#p-PencilSimple" /></svg>Renomear</span>
+                          <span class="ui-mini-btn perigo"><svg><use href="#p-Trash" /></svg>Excluir Ficha</span>
+                        </span>
+                      </div>
+                      <div class="ui-ex-pilha" data-pilha>
+                        <div class="ui-ex-bloco"><span class="ui-alca"><i></i><b>↑</b><b>↓</b></span><span class="ui-ex-ind">01</span><div class="ui-ex-info"><div class="ui-ex-nome">Supino reto articulado</div><div class="ui-ex-det"><span class="ui-tag">Peito</span><span class="ui-tag tec">Tensional básico</span><span class="ui-nota"><svg><use href="#p-NotePencil" /></svg>Buscar a falha</span></div></div><div class="ui-ex-num"><b>2×5-8</b><span><svg><use href="#p-Timer" /></svg>2-3 min</span></div><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-ex-bloco"><span class="ui-alca"><i></i><b>↑</b><b>↓</b></span><span class="ui-ex-ind">02</span><div class="ui-ex-info"><div class="ui-ex-nome">Remada baixa</div><div class="ui-ex-det"><span class="ui-tag">Costas</span><span class="ui-tag tec">Tensional básico</span></div></div><div class="ui-ex-num"><b>2×6-9</b><span><svg><use href="#p-Timer" /></svg>2-3 min</span></div><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-ex-bloco"><span class="ui-alca"><i></i><b>↑</b><b>↓</b></span><span class="ui-ex-ind">03</span><div class="ui-ex-info"><div class="ui-ex-nome">Cross-over alto</div><div class="ui-ex-det"><span class="ui-tag">Peito</span><span class="ui-tag tec">Rest-pause</span><span class="ui-nota"><svg><use href="#p-NotePencil" /></svg>Segurar 1 segundo na contração máxima</span></div></div><div class="ui-ex-num"><b>2×7-11</b><span><svg><use href="#p-Timer" /></svg>2 min</span></div><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-ex-bloco"><span class="ui-alca"><i></i><b>↑</b><b>↓</b></span><span class="ui-ex-ind">04</span><div class="ui-ex-info"><div class="ui-ex-nome">Elevação lateral com halteres</div><div class="ui-ex-det"><span class="ui-tag">Ombro</span></div></div><div class="ui-ex-num"><b>3×10-15</b><span><svg><use href="#p-Timer" /></svg>1-2 min</span></div><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-ex-bloco"><span class="ui-alca"><i></i><b>↑</b><b>↓</b></span><span class="ui-ex-ind">05</span><div class="ui-ex-info"><div class="ui-ex-nome">Tríceps corda</div><div class="ui-ex-det"><span class="ui-tag">Tríceps</span></div></div><div class="ui-ex-num"><b>3×10-12</b><span><svg><use href="#p-Timer" /></svg>1-2 min</span></div><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                      </div>
+                      <template data-novo-bloco>
+                        <div class="ui-ex-bloco"><span class="ui-alca"><i></i><b>↑</b><b>↓</b></span><span class="ui-ex-ind">06</span><div class="ui-ex-info"><div class="ui-ex-nome">Rosca bayesian</div><div class="ui-ex-det"><span class="ui-tag">Bíceps</span><span class="ui-tag tec">Myo-reps</span><span class="ui-nota"><svg><use href="#p-NotePencil" /></svg>Controlar a descida (excêntrica)</span></div></div><div class="ui-ex-num"><b>3×8-12</b><span><svg><use href="#p-Timer" /></svg>1-2 min</span></div><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                      </template>
+                      <div class="ui-modal-fundo" data-modal hidden>
+                        <div class="ui-modal">
+                          <div class="ui-modal-cab">
+                            <div>
+                              <span class="ui-sobre"><i></i>PRESCRIÇÃO // NOVO EXERCÍCIO</span>
+                              <h5>Adicionar Exercício (Treino A)</h5>
+                            </div>
+                            <span class="ui-fechar" data-modal-fechar><svg><use href="#p-X" /></svg></span>
+                          </div>
+                          <div class="ui-campo-l"><span class="ui-rot">Buscar exercício</span><span class="ui-in">bayesian</span></div>
+                          <div class="ui-modal-grade">
+                            <div class="ui-campo-l"><span class="ui-rot">Grupo Muscular *</span><span class="ui-in sel">Bíceps<svg><use href="#p-CaretRight" /></svg></span></div>
+                            <div class="ui-campo-l"><span class="ui-rot">Exercício *</span><span class="ui-in sel">Rosca bayesian<svg><use href="#p-CaretRight" /></svg></span></div>
+                          </div>
+                          <div class="ui-modal-grade tres">
+                            <div class="ui-campo-l"><span class="ui-rot">Séries *</span><span class="ui-in">3</span></div>
+                            <div class="ui-campo-l"><span class="ui-rot">Repetições *</span><span class="ui-in">8-12</span></div>
+                            <div class="ui-campo-l"><span class="ui-rot">Descanso</span><span class="ui-in">1-2 min</span></div>
+                          </div>
+                          <div class="ui-campo-l"><span class="ui-rot">Técnica Avançada (opcional)</span><span class="ui-in sel">Myo-reps<svg><use href="#p-CaretRight" /></svg></span></div>
+                          <div class="ui-campo-l"><span class="ui-rot">Instruções / Anotações de Execução</span><span class="ui-in">Controlar a descida (excêntrica)</span></div>
+                          <div class="ui-modal-rodape">
+                            <span class="ui-mini-btn grande" data-modal-fechar>Fechar</span>
+                            <span class="ui-mini-btn grande primario" data-modal-adicionar>+ Adicionar</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ui-conteudo ui-bib" data-painel="biblioteca" hidden>
+                      <div class="ui-cab">
+                        <div>
+                          <span class="ui-sobre"><i></i><span data-bib-sobre>BIBLIOTECA // 115 EXERCÍCIOS</span></span>
+                          <h4>Biblioteca e Catálogo</h4>
+                          <p>Gerencie seus exercícios, grupos musculares e técnicas de treinamento.</p>
+                        </div>
+                        <span class="ui-btn" data-bib-btn>+ Novo exercício</span>
+                      </div>
+                      <div class="ui-cat-abas">
+                        <span class="ui-cat-aba ativa" data-bib="exercicios"><svg><use href="#p-Barbell" /></svg>Exercícios</span>
+                        <span class="ui-cat-aba" data-bib="grupos"><svg><use href="#p-PersonArmsSpread" /></svg>Grupos Musculares</span>
+                        <span class="ui-cat-aba" data-bib="tecnicas"><svg><use href="#p-Lightning" /></svg>Técnicas de Treino</span>
+                        <span class="ui-cat-aba" data-bib="instrucoes"><svg><use href="#p-NotePencil" /></svg>Instruções</span>
+                      </div>
+                      <div class="ui-filtros">
+                        <span class="ui-seletor" data-bib-filtro>Todos os Grupos<svg><use href="#p-CaretRight" /></svg></span>
+                        <span class="ui-busca-cat"><span data-bib-busca>articulado supino</span><i class="ui-cursor"></i></span>
+                      </div>
+                      <div class="ui-tabela" data-bib-painel="exercicios">
+                        <div class="ui-linha ex cab"><span>Exercício</span><span>Grupo Muscular</span><span>Detalhes</span><span>Ações</span></div>
+                        <div class="ui-linha ex"><b>Supino reto articulado</b><span><span class="ui-badge">Peito</span></span><span class="ui-det"><span class="ui-video"><svg><use href="#p-VideoCamera" /></svg></span><span class="ui-desc">Escápulas aduzidas, descer até a linha do peito</span></span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha ex"><b>Supino inclinado articulado</b><span><span class="ui-badge">Peito</span></span><span class="ui-det"><span class="ui-video"><svg><use href="#p-VideoCamera" /></svg></span><span class="ui-desc">Banco a 30°, cotovelos levemente fechados</span></span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha ex"><b>Supino declinado articulado</b><span><span class="ui-badge">Peito</span></span><span class="ui-det"><span class="ui-desc vazio">—</span></span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                      </div>
+                      <div class="ui-tabela" data-bib-painel="grupos" hidden>
+                        <div class="ui-linha gr cab"><span>Grupo Muscular</span><span>Total de Exercícios Associados</span><span>Ações</span></div>
+                        <div class="ui-linha gr"><b><span class="ui-mini" data-mini="peito"></span>Peito</b><span><span class="ui-badge cinza">17 exercícios</span></span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha gr"><b><span class="ui-mini" data-mini="costas"></span>Costas</b><span><span class="ui-badge cinza">17 exercícios</span></span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha gr"><b><span class="ui-mini" data-mini="ombros"></span>Ombro</b><span><span class="ui-badge cinza">11 exercícios</span></span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha gr"><b><span class="ui-mini" data-mini="biceps"></span>Bíceps</b><span><span class="ui-badge cinza">9 exercícios</span></span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha gr"><b><span class="ui-mini" data-mini="triceps"></span>Tríceps</b><span><span class="ui-badge cinza">6 exercícios</span></span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha gr"><b><span class="ui-mini" data-mini="quadriceps"></span>Quadríceps</b><span><span class="ui-badge cinza">11 exercícios</span></span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                      </div>
+                      <div class="ui-tabela" data-bib-painel="tecnicas" hidden>
+                        <div class="ui-linha tec cab"><span>Técnica</span><span>Descrição</span><span>Ações</span></div>
+                        <div class="ui-linha tec"><b>Drop-set</b><span class="ui-desc">Realiza falha, reduz carga 20-30%, falha novamente sem descanso.</span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha tec"><b>Rest-pause</b><span class="ui-desc">Descansar 10-20 segundos e continuar até a falha.</span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha tec"><b>Bi-set</b><span class="ui-desc">Fazer dois exercícios conjugados</span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha tec"><b>Super-set</b><span class="ui-desc">Dois exercícios para grupos musculares antagonistas, feitos em sequência, normalmente com pouco ou nenhum descanso entre eles.</span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha tec"><b>Cluster set</b><span class="ui-desc">Divide a série em blocos menores com pausas mais longas entre eles, priorizando manter força e qualidade das repetições. Ex.: 2 + 2 + 2 + 2.</span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha tec"><b>Myo-reps</b><span class="ui-desc">Série de ativação próxima da falha seguida de mini-séries curtas com pausas breves — alto estímulo com pouco volume e tempo.</span><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                      </div>
+                      <div class="ui-tabela" data-bib-painel="instrucoes" hidden>
+                        <div class="ui-linha ins cab"><span>Instrução de Execução</span><span>Ações</span></div>
+                        <div class="ui-linha ins"><b>Buscar a falha</b><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha ins"><b>Manter boa carga com boa execução</b><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha ins"><b>Se não tiver 2 polias livres, fazer unilateral</b><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha ins"><b>Controlar a descida (excêntrica)</b><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha ins"><b>Segurar 1 segundo na contração máxima</b><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                        <div class="ui-linha ins"><b>Amplitude completa do movimento</b><span class="ui-acoes"><span><svg><use href="#p-PencilSimple" /></svg></span><span class="perigo"><svg><use href="#p-Trash" /></svg></span></span></div>
+                      </div>
+                    </div>
+                    <div class="ui-conteudo ui-vol" data-painel="volume" hidden>
+                      <div class="migalha">Alunos / João Vitor / Periodizações / <b>Hipertrofia</b></div>
+                      <div class="ui-cab"><div><h4>João Vitor</h4><p>Hipertrofia</p></div></div>
+                      <div class="ficha-abas"><span class="ativa">Treino A</span><span>Treino B</span><span>Treino C</span><span class="nova">+</span><span class="ordem">⇅ Ordenar</span></div>
+                    <div class="vol" data-vol>
+                      <div class="vol-head">
+                        <h3>Volume semanal</h3>
+                        <div class="vol-segmentado" role="group" aria-label="Mostrar volume de" data-visao="semana" data-vol-visao hidden>
+                          <button type="button" tabindex="-1" aria-pressed="false" data-visao-btn="ficha">Esta ficha</button>
+                          <button type="button" tabindex="-1" aria-pressed="true" data-visao-btn="semana">Semana</button>
+                        </div>
+                      </div>
+                      <div class="vol-corpo-placar">
+                        <div class="vol-corpo-coluna">
+                          <div class="vol-corpo" aria-hidden="true"><div data-vista="front"></div><div data-vista="back"></div></div>
+                          <div class="vol-sexo" role="group" aria-label="Corpo do mapa" data-vol-sexo hidden>
+                            <button type="button" tabindex="-1" aria-pressed="true" data-sexo="male">Masculino</button>
+                            <button type="button" tabindex="-1" aria-pressed="false" data-sexo="female">Feminino</button>
+                          </div>
+                        </div>
+                        <div>
+                          <p class="vol-total" aria-live="polite">
+                            <strong data-vol-total>59</strong>
+                            <span data-vol-contexto>séries em 10 grupos musculares · as 3 fichas da semana</span>
+                          </p>
+                          <ul class="vol-lista" data-vol-lista>
+                            <li class="vol-linha" data-grupo="Costas"><span class="vol-grupo">Costas</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span></span><span class="vol-valor">10<span class="sr-only"> séries</span></span></li>
+                            <li class="vol-linha" data-grupo="Quadríceps"><span class="vol-grupo">Quadríceps</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco"></span></span><span class="vol-valor">9<span class="sr-only"> séries</span></span></li>
+                            <li class="vol-linha" data-grupo="Peito"><span class="vol-grupo">Peito</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco"></span><span class="vol-bloco"></span></span><span class="vol-valor">8<span class="sr-only"> séries</span></span></li>
+                            <li class="vol-linha" data-grupo="Isquiotibiais"><span class="vol-grupo">Isquiotibiais</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span></span><span class="vol-valor">6<span class="sr-only"> séries</span></span></li>
+                            <li class="vol-linha" data-grupo="Ombros"><span class="vol-grupo">Ombros</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span></span><span class="vol-valor">6<span class="sr-only"> séries</span></span></li>
+                            <li class="vol-linha" data-grupo="Glúteos"><span class="vol-grupo">Glúteos</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span></span><span class="vol-valor">5<span class="sr-only"> séries</span></span></li>
+                            <li class="vol-linha" data-grupo="Bíceps"><span class="vol-grupo">Bíceps</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span></span><span class="vol-valor">4<span class="sr-only"> séries</span></span></li>
+                            <li class="vol-linha" data-grupo="Panturrilha"><span class="vol-grupo">Panturrilha</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span></span><span class="vol-valor">4<span class="sr-only"> séries</span></span></li>
+                            <li class="vol-linha" data-grupo="Tríceps"><span class="vol-grupo">Tríceps</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span></span><span class="vol-valor">4<span class="sr-only"> séries</span></span></li>
+                            <li class="vol-linha" data-grupo="Abdômen"><span class="vol-grupo">Abdômen</span><span class="vol-blocos" aria-hidden="true"><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco cheio"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span><span class="vol-bloco"></span></span><span class="vol-valor">3<span class="sr-only"> séries</span></span></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="laptop-base"></div>
+          </div>
+
+          <div class="cel2" aria-hidden="true">
+            <div class="cel2-aro">
+              <div class="cel2-tela">
+                <div class="ui ui-cel">
+                  <span class="ui-ilha"></span>
+                  <div class="status"><span>9:41</span><span class="sbi"><i style="width:3px;height:5px"></i><i style="width:3px;height:7px"></i><i style="width:3px;height:9px"></i><i style="width:20px;height:10px;border-radius:3px;margin-left:5px"></i></span></div>
+                  <div class="ui-topo">
+                    <span class="logo"><svg width="20" height="20"><use href="#logo-marca" /></svg>No Game</span>
+                    <svg class="lupa"><use href="#p-MagnifyingGlass" /></svg>
+                  </div>
+                  <div class="corpo">
+                    <div class="migalha">Alunos / João Vitor / Periodizações / <b>Hipertrofia</b></div>
+                    <h4>João Vitor</h4>
+                    <p class="sub">Hipertrofia</p>
+                    <div class="abas"><span class="abas-rolam"><span class="ativa">Treino A</span><span>Treino B</span><span>Treino C</span><span class="nova">+</span></span><span class="ordem">⇅ Ordenar</span></div>
+                    <div class="ui-ex">
+                      <div class="ui-ex-1"><span class="ui-ex-n">01</span><span class="ui-ex-nome">Supino reto articulado</span></div>
+                      <div class="ui-ex-2"><span>2 × 5-8</span><span class="tag">2-3 min</span><span class="tag tec">Tensional básico</span></div>
+                    </div>
+                    <div class="ui-ex">
+                      <div class="ui-ex-1"><span class="ui-ex-n">02</span><span class="ui-ex-nome">Remada baixa</span></div>
+                      <div class="ui-ex-2"><span>2 × 6-9</span><span class="tag">2-3 min</span><span class="tag tec">Tensional básico</span></div>
+                    </div>
+                    <div class="ui-ex">
+                      <div class="ui-ex-1"><span class="ui-ex-n">03</span><span class="ui-ex-nome">Cross-over alto</span></div>
+                      <div class="ui-ex-2"><span>2 × 7-11</span><span class="tag">2 min</span><span class="tag tec">Rest-pause</span></div>
+                    </div>
+                    <div class="ui-ex">
+                      <div class="ui-ex-1"><span class="ui-ex-n">04</span><span class="ui-ex-nome">Elevação lateral</span></div>
+                      <div class="ui-ex-2"><span>3 × 10-15</span><span class="tag">1-2 min</span></div>
+                    </div>
+                    <div class="ui-ex">
+                      <div class="ui-ex-1"><span class="ui-ex-n">05</span><span class="ui-ex-nome">Tríceps na corda</span></div>
+                      <div class="ui-ex-2"><span>3 × 10-12</span><span class="tag">1-2 min</span></div>
+                    </div>
+                  </div>
+                  <div class="ui-tabbar">
+                    <span><svg><use href="#p-House" /></svg> Início</span>
+                    <span class="ativo"><svg><use href="#p-Users" /></svg> Alunos</span>
+                    <span><svg><use href="#p-Barbell" /></svg> Biblioteca</span>
+                    <span><svg><use href="#p-Gear" /></svg> Config.</span>
+                  </div>
+                  <span class="ui-home"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+
+        <ul class="recursos">
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-FolderOpen" /></svg></span>
+            <h3>Alunos e periodizações em pastas</h3>
+            <p>Você navega do aluno para a periodização e daí para as fichas. Uma periodização fica marcada como a atual.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-Copy" /></svg></span>
+            <h3>Copie uma periodização inteira</h3>
+            <p>Leve um bloco que funcionou para outro aluno, ou importe de um aluno existente e ajuste só o que muda.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-Barbell" /></svg></span>
+            <h3>Uma biblioteca só sua</h3>
+            <p>Grupos musculares, exercícios com descrição e vídeo, técnicas como drop-set e rest-pause e frases de instrução que você reaproveita.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-WarningCircle" /></svg></span>
+            <h3>Aviso de exercício repetido</h3>
+            <p>Se o exercício já aparece em outra ficha da periodização, a linha mostra "também em Treino B" e o app pede confirmação antes de salvar. Quem decide é você.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-ChartLineUp" /></svg></span>
+            <h3>Tabela de progressão semanal</h3>
+            <p>Um roteiro fixo de cinco semanas com o que muda na carga, nas repetições e nas séries. Ele aparece no link do aluno e no PDF.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-FileText" /></svg></span>
+            <h3>PDF com a sua logo</h3>
+            <p>A ficha sai com a sua logo e o rodapé que você definir, para quem prefere papel ou quer guardar uma cópia.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-Lock" /></svg></span>
+            <h3>Controle do acesso dos alunos</h3>
+            <p>Veja quem já criou o PIN, gere um link novo, redefina o PIN ou revogue o acesso.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-ShieldCheck" /></svg></span>
+            <h3>O histórico do aluno fica guardado</h3>
+            <p>Excluir uma periodização ou um exercício da ficha não apaga as sessões e as séries que o aluno já registrou.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── Para o aluno ─────────────────────────────────────────────── -->
+    <section id="aluno" class="secao" aria-labelledby="aluno-titulo">
+      <div class="container">
+        <div class="secao-cab">
+          <span class="rotulo"><span class="marca" aria-hidden="true"></span>Para o aluno</span>
+          <h2 id="aluno-titulo" class="titulo-secao">Dá para usar com uma mão, entre uma série e outra</h2>
+          <p class="lede">O aluno recebe a ficha que você montou, com os mesmos nomes, faixas e instruções. Ele não paga nada ao No Game.</p>
+        </div>
+
+        <ul class="recursos">
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-ClockCounterClockwise" /></svg></span>
+            <h3>A carga da última vez, ao lado de cada série</h3>
+            <p>Ele vê a carga e as repetições do treino anterior e marca a série quando termina. Ao fechar a última série de um exercício, a tela desce até o próximo, e uma faixa no topo mostra quantos faltam.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-Timer" /></svg></span>
+            <h3>Cronômetro de descanso que vibra</h3>
+            <p>O descanso que você prescreveu começa a contar quando ele marca a série, e o celular vibra no fim, onde o aparelho permite.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-DeviceMobile" /></svg></span>
+            <h3>Instala como app</h3>
+            <p>Pelo navegador, no Android e no iPhone. O ícone fica na tela inicial e abre direto no treino. Se precisar entrar de novo, ele toca em "Sou aluno" e usa telefone e PIN.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-WifiSlash" /></svg></span>
+            <h3>Abre a ficha sem internet</h3>
+            <p>A ficha aberta nas últimas 24 horas carrega sem conexão, e as séries marcadas offline são enviadas quando a internet volta. Para ter o treino sempre à mão, ele baixa o PDF da ficha.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-Medal" /></svg></span>
+            <h3>Progresso e recordes pessoais</h3>
+            <p>O aluno vê a evolução da carga e os recordes de cada exercício da ficha, e um aviso quando passa da faixa e é hora de subir a carga.</p>
+          </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-Archive" /></svg></span>
+            <h3>Periodizações anteriores para consulta</h3>
+            <p>As fichas e o histórico de blocos antigos continuam lá. Ele só registra carga na periodização atual.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── Assinatura vencida ───────────────────────────────────────── -->
+    <section class="secao wash" aria-labelledby="vencimento-titulo">
+      <div class="container vencimento">
+        <div class="secao-cab" style="margin-bottom:0">
+          <span class="rotulo"><span class="marca" aria-hidden="true"></span>Se a assinatura vencer</span>
+          <h2 id="vencimento-titulo" class="titulo-secao">Atrasou a mensalidade? Seu aluno continua treinando.</h2>
+          <p class="lede">
+            Ele já pagou você e pode estar no meio da sessão. Por isso o bloqueio começa pela sua
+            edição, e o aviso que chega ao aluno não fala de pagamento.
+          </p>
+        </div>
+
+        <div>
+          <table class="tabela">
+            <caption class="sr-only">O que acontece com você e com os links dos alunos em cada etapa depois do vencimento</caption>
+            <thead>
+              <tr><th scope="col">Etapa</th><th scope="col">Você</th><th scope="col">Links dos alunos</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Carência<small class="num">7 dias</small></td>
+                <td data-r="Você">Tudo funciona. Você recebe aviso no app e por e-mail para atualizar o pagamento.</td>
+                <td data-r="Links dos alunos">Funcionam normalmente.</td>
+              </tr>
+              <tr>
+                <td>Vencido<small class="num">até 30 dias</small></td>
+                <td data-r="Você">Só leitura. Você vê e exporta, mas não cria nem edita alunos e fichas.</td>
+                <td data-r="Links dos alunos">Funcionam. O aluno vê o treino e registra as cargas.</td>
+              </tr>
+              <tr>
+                <td>Depois disso</td>
+                <td data-r="Você">Só leitura, com a opção de reativar.</td>
+                <td data-r="Links dos alunos" class="aviso-aluno">"Ficha indisponível no momento, fale com seu treinador."</td>
+              </tr>
+              <tr>
+                <td>Reativou</td>
+                <td data-r="Você">Tudo volta como estava.</td>
+                <td data-r="Links dos alunos">Os mesmos links voltam a funcionar, sem precisar reenviar.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="nota-pequena">Nenhum dado é apagado sem aviso antes. Os prazos são os atuais e podem mudar.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Planos ───────────────────────────────────────────────────── -->
+    <section id="planos" class="secao branca" aria-labelledby="planos-titulo">
+      <div class="container">
+        <div class="secao-cab">
+          <span class="rotulo"><span class="marca" aria-hidden="true"></span>Planos</span>
+          <h2 id="planos-titulo" class="titulo-secao">Você paga a mensalidade. Seu aluno não paga nada.</h2>
+        </div>
+
+        <div class="planos">
+          <article class="plano escuro" aria-labelledby="plano-treinador">
+            <div class="plano-cab">
+              <div>
+                <h3 id="plano-treinador" class="plano-nome">Plano Treinador</h3>
+                <p class="plano-para">Para personal trainers e acadêmicos de Educação Física. CREF opcional.</p>
+              </div>
+            </div>
+            <!-- PREÇO PROVISÓRIO: troque o valor quando o preço for definido (PRD §3.4) -->
+            <div class="preco">
+              <span class="preco-valor"><sup>R$</sup>49</span>
+              <span class="preco-periodo">/mês</span>
+            </div>
+            <ul class="plano-itens">
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Alunos, periodizações e fichas</li>
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Link e app instalável para cada aluno, sem custo para ele</li>
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Biblioteca de exercícios, técnicas e instruções</li>
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Progresso de cargas e recordes de cada aluno</li>
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>PDF com a sua logo e o seu rodapé</li>
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Volume semanal com mapa do corpo e aeróbico na ficha</li>
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Tabela de progressão semanal</li>
+            </ul>
+            <div class="plano-rodape">
+              <a class="btn btn-primary" href="https://novo-treino.vercel.app/register">
+                Criar conta de treinador
+                <svg class="seta" width="16" height="16" aria-hidden="true"><use href="#p-ArrowRight" /></svg>
+              </a>
+              <p class="plano-obs">A conta é liberada assim que o pagamento é confirmado, e você recebe um e-mail de boas-vindas.</p>
+            </div>
+          </article>
+
+          <article class="plano claro" aria-labelledby="plano-aluno">
+            <div class="plano-cab">
+              <div>
+                <h3 id="plano-aluno" class="plano-nome">Plano Aluno</h3>
+                <p class="plano-para">Para quem treina sozinho, sem treinador.</p>
+              </div>
+              <span class="selo-breve">Em breve</span>
+            </div>
+            <!-- PREÇO PROVISÓRIO: troque o valor quando o preço for definido (PRD §3.4) -->
+            <div class="preco">
+              <span class="preco-valor"><sup>R$</sup>19</span>
+              <span class="preco-periodo">/mês</span>
+            </div>
+            <ul class="plano-itens">
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Monte e edite as suas próprias periodizações e fichas</li>
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Registre carga e repetições durante o treino</li>
+              <li class="nao"><svg aria-hidden="true"><use href="#p-X" /></svg>Não inclui alunos nem links de compartilhamento</li>
+            </ul>
+            <p class="plano-para">Ainda não está aberto para assinatura.</p>
+          </article>
+        </div>
+
+        <div class="faixa-aluno-gratis">
+          <strong>O que você cobra do aluno fica com você.</strong>
+          <p>O valor é combinado entre vocês, fora do app. O No Game não processa esse pagamento e não fica com nenhuma parte.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Perguntas ────────────────────────────────────────────────── -->
+    <section id="perguntas" class="secao" aria-labelledby="perguntas-titulo">
+      <div class="container">
+        <div class="secao-cab">
+          <span class="rotulo"><span class="marca" aria-hidden="true"></span>Perguntas</span>
+          <h2 id="perguntas-titulo" class="titulo-secao">Antes de criar a conta</h2>
+        </div>
+
+        <div class="faq">
+          <details>
+            <summary>O aluno precisa instalar algum app?<span class="mais" aria-hidden="true"></span></summary>
+            <p class="resposta">Não. Ele abre o link no navegador e, se quiser, instala na tela inicial pelo próprio navegador, no Android ou no iPhone. Em breve o No Game também estará na App Store. No iPhone, na primeira vez que abre o ícone, ele toca em "Sou aluno" e entra de novo com telefone e PIN.</p>
+          </details>
+          <details>
+            <summary>O aluno esqueceu o PIN. E agora?<span class="mais" aria-hidden="true"></span></summary>
+            <p class="resposta">Ele pede um PIN novo na tela de entrada e recebe por e-mail o link para criar outro. Você também pode redefinir o PIN dele pela lista de alunos.</p>
+          </details>
+          <details>
+            <summary>Funciona sem internet?<span class="mais" aria-hidden="true"></span></summary>
+            <p class="resposta">Em parte. A ficha que o aluno abriu nas últimas 24 horas carrega sem conexão, e as séries que ele marcar ficam guardadas e são enviadas quando a internet volta. Para ter o treino sempre à mão sem internet, ele baixa o PDF da ficha pelo app. O resto do app precisa de conexão.</p>
+          </details>
+          <details>
+            <summary>Posso colocar a minha logo?<span class="mais" aria-hidden="true"></span></summary>
+            <p class="resposta">Pode. Envie a sua logo em Configurações. Ela aparece para o aluno no link e no PDF da ficha, junto com o rodapé que você escrever.</p>
+          </details>
+          <details>
+            <summary>Já tenho fichas prontas. Preciso montar tudo do zero?<span class="mais" aria-hidden="true"></span></summary>
+            <p class="resposta">Você monta a primeira vez. Depois dá para copiar uma periodização para outro aluno e ajustar só o que muda.</p>
+          </details>
+          <details>
+            <summary>Quando a minha conta é liberada?<span class="mais" aria-hidden="true"></span></summary>
+            <p class="resposta">Assim que o pagamento é confirmado. A liberação é automática e você recebe um e-mail de boas-vindas.</p>
+          </details>
+          <details>
+            <summary>Treino sozinho. Posso usar?<span class="mais" aria-hidden="true"></span></summary>
+            <p class="resposta">Ainda não. O Plano Aluno, para quem monta o próprio treino, está em preparação. Hoje o No Game atende o treinador e os alunos dele.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Chamada final ────────────────────────────────────────────── -->
+    <section class="final escuro" aria-labelledby="final-titulo">
+      <div class="container final-grade">
+        <span class="rotulo"><span class="marca" aria-hidden="true"></span>Para começar</span>
+        <h2 id="final-titulo" class="titulo-secao">Crie a conta e mande a próxima ficha pelo No Game</h2>
+        <p class="lede">Cadastre o aluno com o telefone dele, que é o login, e envie o link da periodização.</p>
+        <a class="btn btn-primary" href="https://novo-treino.vercel.app/register">
+          Criar conta de treinador
+          <svg class="seta" width="16" height="16" aria-hidden="true"><use href="#p-ArrowRight" /></svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="container rodape-linha">
+      <span class="logo"><svg width="20" height="20" aria-hidden="true"><use href="#logo-marca" /></svg>No Game</span>
+      <nav aria-label="Rodapé">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#planos">Planos</a>
+        <a href="#perguntas">Perguntas</a>
+        <a href="https://novo-treino.vercel.app/login">Entrar</a>
+      </nav>
+      <span class="num">© 2026 No Game</span>
+    </div>
+  </footer>
+
+  <script>
+    // Cronômetro de descanso da tela do hero: começa quando a folha de
+    // descanso sobe (1,95s depois da entrada) e conta uma vez só, até zerar.
+    (function () {
+      var el = document.querySelector('[data-descanso]');
+      if (!el) return;
+      var reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var total = 120;
+      var inicio;
+
+      function formata(s) {
+        var m = Math.floor(s / 60);
+        var r = s % 60;
+        return m + ':' + (r < 10 ? '0' : '') + r;
+      }
+      function passo(agora) {
+        if (!inicio) inicio = agora;
+        var decorrido = (agora - inicio) / 1000;
+        var restante = Math.max(0, Math.ceil(total - decorrido));
+        el.textContent = formata(restante);
+        if (restante > 0) requestAnimationFrame(passo);
+      }
+      setTimeout(function () { requestAnimationFrame(passo); }, reduzido ? 0 : 2000);
+    })();
+  </script>
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
