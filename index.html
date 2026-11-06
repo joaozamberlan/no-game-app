@@ -750,50 +750,65 @@
     .pin span.foco::after { content: ''; width: 1.5px; height: 22px; background: #121316; }
     .entrada-form .mini-btn.primario { justify-content: center; padding: 11px; font-size: 14px; border-radius: 9px; }
 
-    /* Placar de progresso (prog-card do app) */
+    /* Progresso do treinador: uma linha por exercício (prog-linha do app, layout de celular) */
     .prog {
       background: #fff;
       border: 1px solid var(--line-strong);
       border-radius: 6px;
       box-shadow: inset 0 3px 0 #121316, 0 1px 2px rgba(18, 19, 22, 0.05), 0 12px 32px -8px rgba(18, 19, 22, 0.14);
-      padding: 20px 18px 18px;
-      display: grid; gap: 14px;
+      padding: 20px 18px 10px;
       max-width: 560px;
     }
-    .prog-topo { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .prog-nome { font-weight: 750; font-size: 15px; letter-spacing: -0.01em; }
-    .prog-faixa { font-family: var(--font-mono); font-size: 12px; color: #62666f; margin-left: auto; }
-    .prog-valor { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
-    .prog-kg {
-      font-family: var(--font); font-stretch: 62%; font-weight: 800;
-      font-size: 64px; line-height: 0.85; letter-spacing: -0.01em;
-      font-variant-numeric: tabular-nums;
+    .prog-resumo { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .prog-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12.5px; font-weight: 600;
+      padding: 5px 12px; border-radius: 999px;
+      border: 1px solid rgba(20, 22, 26, 0.10); background: #fff;
     }
-    .prog-kg small { font-size: 22px; margin-left: 4px; }
-    .prog-meta { display: grid; gap: 6px; padding-bottom: 4px; }
-    .prog-meta span { font-family: var(--font-mono); font-size: 12.5px; color: #565963; }
+    .prog-chip b { font-family: var(--font-mono); font-weight: 800; }
+    .prog-chip.acima b { color: var(--success-ink); }
+    .prog-chip.abaixo b { color: var(--warning-ink); }
+    .prog-chip.estatico { color: #565963; font-weight: 500; }
+    .prog-ficha-nome { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+    .prog-lista { border-top: 1px solid rgba(20, 22, 26, 0.20); }
+    .prog-linha {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto 14px;
+      grid-template-areas: 'id selo chev' 'placar placar chev';
+      align-items: center; gap: 8px 12px;
+      padding: 12px 4px;
+      border-bottom: 1px solid rgba(20, 22, 26, 0.10);
+    }
+    .prog-linha-id { grid-area: id; display: grid; gap: 2px; min-width: 0; }
+    .prog-linha-nome { font-weight: 600; font-size: 14.5px; }
+    .prog-linha-sub { font-size: 12px; color: #62666f; }
+    .prog-linha .selo { grid-area: selo; }
+    .prog-linha-chev { grid-area: chev; width: 14px; height: 14px; color: #62666f; }
+    .prog-recorde { font-size: 11px; font-weight: 700; color: var(--success-ink); white-space: nowrap; }
     .selo {
-      display: inline-flex; align-items: center; gap: 4px;
+      display: inline-flex; align-items: center; gap: 3px;
       width: max-content;
-      padding: 2px 8px; border-radius: 99px;
-      font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; letter-spacing: 0.02em;
+      padding: 3px 7px; border-radius: 2px;
+      font-family: var(--font-mono); font-size: 11px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+      white-space: nowrap;
     }
-    .selo.acima { color: var(--success-ink); background: rgba(45, 168, 104, 0.12); border: 1px solid rgba(45, 168, 104, 0.28); }
-    .selo.abaixo { color: var(--warning-ink); background: rgba(220, 104, 3, 0.10); border: 1px solid rgba(220, 104, 3, 0.28); }
-    .placar { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 2px; list-style: none; }
+    .selo.acima { color: #06301b; background: var(--success); }
+    .selo.abaixo { color: var(--warning-ink); background: rgba(220, 104, 3, 0.14); box-shadow: inset 0 0 0 1px var(--warning); }
+    .placar { grid-area: placar; display: grid; grid-template-columns: repeat(4, 54px); gap: 2px; list-style: none; }
     .placar li {
-      display: grid; gap: 3px; justify-items: center;
-      padding: 9px 2px 7px;
+      display: grid; gap: 1px; justify-items: center;
+      padding: 6px 2px 5px;
       background: #eae8e1;
       border-bottom: 3px solid #dedbd2;
-      text-align: center;
     }
     .placar li.acima { border-bottom-color: var(--success); }
     .placar li.abaixo { border-bottom-color: var(--warning); }
     .placar li.ultima { background: #dedbd2; }
-    .placar-kg { font-stretch: 62%; font-weight: 800; font-size: 18px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .placar-kg { font-stretch: 62%; font-weight: 800; font-size: 16px; line-height: 1; font-variant-numeric: tabular-nums; }
     .placar-reps { font-family: var(--font-mono); font-size: 11.5px; color: #565963; white-space: nowrap; }
-    .placar-data { font-family: var(--font-mono); font-size: 10.5px; color: #62666f; }
+    .placar-data { font-family: var(--font-mono); font-size: 10px; color: #62666f; }
+    .placar li.ultima .placar-data { color: #565963; }
 
     /* Telas assentam ao rolar; sem suporte, aparecem prontas */
     @supports (animation-timeline: view()) {
@@ -1955,31 +1970,53 @@
             </div>
             <figure class="prog tela-entra">
               <figcaption class="sr-only">
-                Placar do Supino reto articulado com faixa de 5 a 8 repetições. Últimas seis
-                sessões: 85 kg por 8, 87,5 por 7, 87,5 por 8, 90 por 4 (abaixo da faixa), 90 por 8
-                e 92,5 por 9 (acima da faixa, sinal de subir carga).
+                Progresso do Treino A no painel do treinador, uma linha por exercício com as quatro
+                últimas sessões. Supino reto articulado, faixa 5 a 8: 87,5 kg por 8, 90 por 4 (abaixo
+                da faixa), 90 por 8 e 92,5 por 9, recorde e sinal de subir carga. Remada baixa, faixa
+                6 a 9: de 70 kg por 8 a 72,5 por 9, recorde de repetições. Cross-over alto, faixa 7 a
+                11: de 30 kg por 10 a 35 por 6, abaixo da faixa, sinal de carga alta.
               </figcaption>
-              <div aria-hidden="true" style="display:grid;gap:14px">
-                <div class="prog-topo">
-                  <svg width="20" height="20"><use href="#pd-Barbell" /></svg>
-                  <span class="prog-nome">Supino reto articulado</span>
-                  <span class="prog-faixa">Faixa 5-8</span>
+              <div aria-hidden="true">
+                <div class="prog-resumo">
+                  <span class="prog-chip acima"><b>1</b> para subir carga</span>
+                  <span class="prog-chip abaixo"><b>1</b> com carga alta</span>
+                  <span class="prog-chip estatico">Último treino há 2 dias</span>
                 </div>
-                <div class="prog-valor">
-                  <span class="prog-kg">92,5<small>kg</small></span>
-                  <span class="prog-meta">
+                <div class="prog-ficha-nome">Treino A</div>
+                <div class="prog-lista">
+                  <div class="prog-linha">
+                    <span class="prog-linha-id"><span class="prog-linha-nome">Supino reto articulado<span class="prog-recorde"> · recorde</span></span><span class="prog-linha-sub">2 séries · faixa 5-8</span></span>
                     <span class="selo acima">▲ Subir carga</span>
-                    <span>9 reps · 21/10</span>
-                  </span>
+                    <ol class="placar">
+                      <li><span class="placar-kg">87,5</span><span class="placar-reps">×8</span><span class="placar-data">30/09</span></li>
+                      <li class="abaixo"><span class="placar-kg">90</span><span class="placar-reps">×4 ▼</span><span class="placar-data">07/10</span></li>
+                      <li><span class="placar-kg">90</span><span class="placar-reps">×8</span><span class="placar-data">14/10</span></li>
+                      <li class="acima ultima"><span class="placar-kg">92,5</span><span class="placar-reps">×9 ▲</span><span class="placar-data">21/10</span></li>
+                    </ol>
+                    <svg class="prog-linha-chev"><use href="#p-CaretRight" /></svg>
+                  </div>
+                  <div class="prog-linha">
+                    <span class="prog-linha-id"><span class="prog-linha-nome">Remada baixa<span class="prog-recorde"> · recorde</span></span><span class="prog-linha-sub">2 séries · faixa 6-9</span></span>
+                    <ol class="placar">
+                      <li><span class="placar-kg">70</span><span class="placar-reps">×8</span><span class="placar-data">30/09</span></li>
+                      <li><span class="placar-kg">72,5</span><span class="placar-reps">×7</span><span class="placar-data">07/10</span></li>
+                      <li><span class="placar-kg">72,5</span><span class="placar-reps">×8</span><span class="placar-data">14/10</span></li>
+                      <li class="ultima"><span class="placar-kg">72,5</span><span class="placar-reps">×9</span><span class="placar-data">21/10</span></li>
+                    </ol>
+                    <svg class="prog-linha-chev"><use href="#p-CaretRight" /></svg>
+                  </div>
+                  <div class="prog-linha">
+                    <span class="prog-linha-id"><span class="prog-linha-nome">Cross-over alto</span><span class="prog-linha-sub">2 séries · faixa 7-11</span></span>
+                    <span class="selo abaixo">▼ Carga alta</span>
+                    <ol class="placar">
+                      <li><span class="placar-kg">30</span><span class="placar-reps">×10</span><span class="placar-data">30/09</span></li>
+                      <li><span class="placar-kg">32,5</span><span class="placar-reps">×9</span><span class="placar-data">07/10</span></li>
+                      <li><span class="placar-kg">35</span><span class="placar-reps">×8</span><span class="placar-data">14/10</span></li>
+                      <li class="abaixo ultima"><span class="placar-kg">35</span><span class="placar-reps">×6 ▼</span><span class="placar-data">21/10</span></li>
+                    </ol>
+                    <svg class="prog-linha-chev"><use href="#p-CaretRight" /></svg>
+                  </div>
                 </div>
-                <ol class="placar">
-                  <li><span class="placar-kg">85</span><span class="placar-reps">× 8</span><span class="placar-data">16/09</span></li>
-                  <li><span class="placar-kg">87,5</span><span class="placar-reps">× 7</span><span class="placar-data">23/09</span></li>
-                  <li><span class="placar-kg">87,5</span><span class="placar-reps">× 8</span><span class="placar-data">30/09</span></li>
-                  <li class="abaixo"><span class="placar-kg">90</span><span class="placar-reps">× 4 ▼</span><span class="placar-data">07/10</span></li>
-                  <li><span class="placar-kg">90</span><span class="placar-reps">× 8</span><span class="placar-data">14/10</span></li>
-                  <li class="acima ultima"><span class="placar-kg">92,5</span><span class="placar-reps">× 9 ▲</span><span class="placar-data">21/10</span></li>
-                </ol>
               </div>
             </figure>
           </li>
