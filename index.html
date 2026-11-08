@@ -343,6 +343,17 @@
     /* ── Celular desenhado em CSS ────────────────────────────────────── */
     .hero-preco { font-size: 14px; color: var(--d-muted); margin-top: -8px; }
     .hero-preco b { color: var(--d-text); font-weight: 700; }
+    .hero-solo { font-size: 14px; color: var(--d-muted); }
+    .hero-solo a { color: var(--d-text); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    /* Celular: o aparelho sobe para a primeira dobra, logo depois do preço; as dores vêm depois dele */
+    @media (max-width: 919px) {
+      .hero-grade { gap: 24px; }
+      .hero-texto { display: contents; }
+      .hero-texto > * { justify-self: start; }
+      .palco { order: 1; justify-self: stretch; margin-block: 8px; }
+      .destaques { order: 2; margin-top: 0; }
+      .hero-solo { order: 3; }
+    }
 
     .palco { display: flex; justify-content: center; }
 
@@ -1685,6 +1696,7 @@
     <symbol id="pd-CalendarCheck" viewBox="0 0 256 256"><path d="M216,48V88H40V48a8,8,0,0,1,8-8H208A8,8,0,0,1,216,48Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-38.34-85.66a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L116,164.69l42.34-42.35A8,8,0,0,1,169.66,122.34Z"/></symbol>
     <symbol id="pd-Gauge" viewBox="0 0 256 256"><path d="M232,152v24a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V153.13C24,95.65,70.15,48.2,127.63,48A104,104,0,0,1,232,152Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M207.06,72.67A111.24,111.24,0,0,0,128,40h-.4C66.07,40.21,16,91,16,153.13V176a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V152A111.25,111.25,0,0,0,207.06,72.67ZM224,176H119.71l54.76-75.3a8,8,0,0,0-12.94-9.42L99.92,176H32V153.13c0-3.08.15-6.12.43-9.13H56a8,8,0,0,0,0-16H35.27c10.32-38.86,44-68.24,84.73-71.66V80a8,8,0,0,0,16,0V56.33A96.14,96.14,0,0,1,221,128H200a8,8,0,0,0,0,16h23.67c.21,2.65.33,5.31.33,8Z"/></symbol>
     <symbol id="pd-NotePencil" viewBox="0 0 256 256"><path d="M200,88l-72,72H96V128l72-72Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M229.66,58.34l-32-32a8,8,0,0,0-11.32,0l-96,96A8,8,0,0,0,88,128v32a8,8,0,0,0,8,8h32a8,8,0,0,0,5.66-2.34l96-96A8,8,0,0,0,229.66,58.34ZM124.69,152H104V131.31l64-64L188.69,88ZM200,76.69,179.31,56,192,43.31,212.69,64ZM224,128v80a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h80a8,8,0,0,1,0,16H48V208H208V128a8,8,0,0,1,16,0Z"/></symbol>
+    <symbol id="pd-User" viewBox="0 0 256 256"><path d="M192,96a64,64,0,1,1-64-64A64,64,0,0,1,192,96Z" opacity="0.45" style="fill:var(--brand,#BA281A)"/><path fill="currentColor" d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></symbol>
   </svg>
 
   <header class="topo escuro">
@@ -1714,37 +1726,36 @@
       <div class="container hero-grade">
         <div class="hero-texto">
           <span class="rotulo entra" style="--i:0"><span class="marca" aria-hidden="true"></span>Para personal trainers e treinadores de musculação</span>
-          <h1 id="hero-titulo" class="titulo-hero" aria-label="Sua ficha sai do PDF e vira treino registrado, série por série.">
-            <span aria-hidden="true" class="palavra" style="--i:0">Sua</span>
-            <span aria-hidden="true" class="palavra" style="--i:1">ficha</span>
-            <span aria-hidden="true" class="palavra" style="--i:2">sai</span>
-            <span aria-hidden="true" class="palavra" style="--i:3">do</span>
-            <span aria-hidden="true" class="palavra" style="--i:4">PDF</span>
-            <span aria-hidden="true" class="palavra" style="--i:5">e</span>
-            <span aria-hidden="true" class="palavra" style="--i:6">vira</span>
-            <span aria-hidden="true" class="palavra" style="--i:7">treino</span>
-            <span aria-hidden="true" class="palavra" style="--i:8">registrado,</span>
-            <span aria-hidden="true" class="palavra" style="--i:9">série</span>
-            <span aria-hidden="true" class="palavra" style="--i:10">por</span>
-            <span aria-hidden="true" class="palavra" style="--i:11">série.</span>
+          <h1 id="hero-titulo" class="titulo-hero" aria-label="Seu aluno treina sozinho. Você continua sabendo de tudo.">
+            <span aria-hidden="true" class="palavra" style="--i:0">Seu</span>
+            <span aria-hidden="true" class="palavra" style="--i:1">aluno</span>
+            <span aria-hidden="true" class="palavra" style="--i:2">treina</span>
+            <span aria-hidden="true" class="palavra" style="--i:3">sozinho.</span>
+            <br aria-hidden="true">
+            <span aria-hidden="true" class="palavra" style="--i:4">Você</span>
+            <span aria-hidden="true" class="palavra" style="--i:5">continua</span>
+            <span aria-hidden="true" class="palavra" style="--i:6">sabendo</span>
+            <span aria-hidden="true" class="palavra" style="--i:7">de</span>
+            <span aria-hidden="true" class="palavra" style="--i:8">tudo.</span>
           </h1>
           <p class="lede entra" style="--i:1">
-            Você monta a periodização e manda um link. O aluno registra carga e repetições no
-            celular. Você vê a evolução sem perguntar no WhatsApp.
+            Você monta a periodização e manda um link. O aluno registra carga e repetições de
+            cada série no celular, e você acompanha a evolução sem perguntar no WhatsApp.
           </p>
           <div class="hero-botoes entra" style="--i:2">
             <a class="btn btn-primary" href="https://novo-treino.vercel.app/register">
-              Criar conta de treinador
+              Testar 7 dias grátis
               <svg class="seta" width="16" height="16" aria-hidden="true"><use href="#p-ArrowRight" /></svg>
             </a>
             <a class="btn btn-on-dark" href="#como-funciona">Ver como funciona</a>
           </div>
-          <p class="hero-preco entra" style="--i:2"><b>A partir de R$ 39,90/mês</b> · 7 dias grátis · seus alunos não pagam nada</p>
+          <p class="hero-preco entra" style="--i:2"><b>A partir de R$ 39,90/mês</b> · 7 dias grátis</p>
           <ul class="destaques entra" style="--i:3">
-            <li>O aluno usa de graça. Só você assina.</li>
-            <li>Copie uma periodização de um aluno para outro e ajuste só o que muda.</li>
-            <li>Acabou a ficha em PDF que ninguém sabe se foi feita.</li>
+            <li>Veja quem treinou na semana e como foi cada treino.</li>
+            <li>Saiba a hora de subir a carga, exercício por exercício.</li>
+            <li>O aluno não paga nada e não precisa baixar app.</li>
           </ul>
+          <p class="hero-solo entra" style="--i:3">Treina sem treinador? <a href="https://novo-treino.vercel.app/register?tipo=individual">Monto meu treino</a>, R$ 12,90/mês.</p>
         </div>
 
         <div class="palco">
@@ -2399,6 +2410,11 @@
             <h3>Observações do aluno no sininho</h3>
             <p>Ao encerrar o treino, o aluno pode contar o que sentiu: dor, cansaço, academia cheia. A observação chega no sininho do seu painel até você marcar como lida.</p>
           </li>
+          <li>
+            <span class="ico" aria-hidden="true"><svg><use href="#pd-User" /></svg></span>
+            <h3>O seu treino também</h3>
+            <p>Em Meu treino você monta a sua própria periodização, e em Treinar usa a mesma tela dos seus alunos. Não conta no limite do plano nem aparece na lista de alunos.</p>
+          </li>
         </ul>
       </div>
     </section>
@@ -2532,13 +2548,14 @@
               <li><svg aria-hidden="true"><use href="#p-Check" /></svg>PDF com a sua logo e o seu rodapé</li>
               <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Volume semanal com mapa do corpo e aeróbico na ficha</li>
               <li><svg aria-hidden="true"><use href="#p-Check" /></svg>Tabela de progressão semanal</li>
+              <li><svg aria-hidden="true"><use href="#p-Check" /></svg>O seu próprio treino, fora do limite de alunos</li>
             </ul>
             <div class="plano-rodape">
               <a class="btn btn-primary" href="https://novo-treino.vercel.app/register">
                 Criar conta de treinador
                 <svg class="seta" width="16" height="16" aria-hidden="true"><use href="#p-ArrowRight" /></svg>
               </a>
-              <p class="plano-obs">7 dias grátis em qualquer plano. Pagamento com cartão, sem aprovação manual: a conta é liberada assim que você assina, e você recebe um e-mail de boas-vindas. Só alunos ativos contam no limite. Troque de plano ou cancele em Configurações.</p>
+              <p class="plano-obs">7 dias grátis em qualquer plano. Crie a conta com e-mail e senha ou com o Google. Pagamento com cartão, sem aprovação manual: a conta é liberada assim que você assina, e você recebe um e-mail de boas-vindas. Só alunos ativos contam no limite. Troque de plano ou cancele em Configurações.</p>
             </div>
           </article>
 
@@ -2546,7 +2563,7 @@
             <div class="plano-cab">
               <div>
                 <h3 id="plano-sozinho" class="plano-nome">Treino sozinho</h3>
-                <p class="plano-para">Para quem monta o próprio treino, sem treinador.</p>
+                <p class="plano-para">Para quem monta o próprio treino, sem treinador. No cadastro, é a opção "Monto meu treino".</p>
               </div>
             </div>
             <div class="preco">
@@ -2562,10 +2579,10 @@
             </ul>
             <div class="plano-rodape">
               <a class="btn btn-primary" href="https://novo-treino.vercel.app/register?tipo=individual">
-                Criar conta Treino sozinho
+                Monto meu treino
                 <svg class="seta" width="16" height="16" aria-hidden="true"><use href="#p-ArrowRight" /></svg>
               </a>
-              <p class="plano-obs">7 dias grátis. Cadastro só com nome, e-mail e senha.</p>
+              <p class="plano-obs">7 dias grátis. Cadastro com nome, e-mail e senha ou com o Google.</p>
             </div>
           </article>
         </div>
@@ -2615,8 +2632,8 @@
             <p class="resposta">Básico até 30, Intermediário até 50 e Pro sem limite. Só alunos ativos contam: desativou um, a vaga volta. Se precisar de mais, o app oferece o plano de cima na hora de cadastrar. O aluno desativado não abre mais a ficha, mas ainda baixa o PDF do treino.</p>
           </details>
           <details>
-            <summary>Treino sozinho. Posso usar?<span class="mais" aria-hidden="true"></span></summary>
-            <p class="resposta">Pode. O plano Treino sozinho custa R$ 12,90/mês: você monta as próprias periodizações e registra o treino na mesma tela que os alunos usam. Ele é só para você, sem alunos e sem links.</p>
+            <summary>Não tenho treinador. Posso usar?<span class="mais" aria-hidden="true"></span></summary>
+            <p class="resposta">Pode. Escolha "Monto meu treino" no cadastro. O plano Treino sozinho custa R$ 12,90/mês, com 7 dias grátis: você monta as próprias periodizações e registra o treino na mesma tela que os alunos usam. Ele é só para você, sem alunos e sem links.</p>
           </details>
         </div>
       </div>
@@ -2633,7 +2650,7 @@
             Criar conta de treinador
             <svg class="seta" width="16" height="16" aria-hidden="true"><use href="#p-ArrowRight" /></svg>
           </a>
-          <a class="btn btn-on-dark" href="https://novo-treino.vercel.app/register?tipo=individual">Treino sozinho</a>
+          <a class="btn btn-on-dark" href="https://novo-treino.vercel.app/register?tipo=individual">Monto meu treino</a>
         </div>
       </div>
     </section>
